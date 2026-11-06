@@ -1,0 +1,10 @@
+split_a,split_b,key,shared_keys
+train,val,trial_id,0
+train,val,criteria,7
+train,val,criteria+diseases_cleaned+drugs+icdcodes,1
+train,test,trial_id,0
+train,test,criteria,0
+train,test,criteria+diseases_cleaned+drugs+icdcodes,0
+val,test,trial_id,0
+val,test,criteria,0
+val,test,criteria+diseases_cleaned+drugs+icdcodes,0

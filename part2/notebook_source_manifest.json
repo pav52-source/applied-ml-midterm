@@ -1,0 +1,190 @@
+{
+  "config.py": {
+    "sha256": "4f7a0b8e401f428d2107d5218565bb8540feb4362942b5bd3ba1ed3f3bcbbabf",
+    "definitions": [],
+    "adaptation": "Only paths adapted; hyperparameters copied unchanged."
+  },
+  "part2/config.py": {
+    "sha256": "6050191483230fb09691117f9b9be45c222a452fcd786781fd876b9c183d1fd0",
+    "definitions": [],
+    "adaptation": "Only paths adapted; hyperparameters copied unchanged."
+  },
+  "data_utils.py": {
+    "sha256": "a76bb49aa38d3aba7924d2f0fde938d7ab6162ecc55fa2a04addd6bee3328ab7",
+    "definitions": [
+      "Dataset",
+      "load_data",
+      "load_reason_data",
+      "load_test"
+    ]
+  },
+  "models.py": {
+    "sha256": "3b15b97b13493f3252647017609417ddb060d498b375727297438553f9b80f6b",
+    "definitions": [
+      "evaluate",
+      "evaluate_predictions",
+      "predict_labels",
+      "predict_probabilities",
+      "train_ovr",
+      "train_rbf_svm",
+      "tune_thresholds"
+    ]
+  },
+  "pseudo_labeling.py": {
+    "sha256": "4e531e368ea8b56c5edd57d2a8070a65ca246b65a0f94faba0b2730396fc30d5",
+    "definitions": [
+      "augment_and_train",
+      "estimate_cluster_labels",
+      "estimate_soft_cluster_labels",
+      "fit_gmm_pseudo",
+      "fit_kmeans_pseudo",
+      "fit_per_label_kmeans"
+    ]
+  },
+  "experiments.py": {
+    "sha256": "f92c4eaffee67ab0665554f7a8f89c7f42baf0e658cad7404c3b879f97c81a7e",
+    "definitions": [
+      "compare_cluster_counts",
+      "run_experiments"
+    ]
+  },
+  "submission.py": {
+    "sha256": "c085ef4a4b68a14f5283de1090ba446d4eb211bbe5c966efa50dfc453d173e8f",
+    "definitions": [
+      "make_submission"
+    ]
+  },
+  "part2/data.py": {
+    "sha256": "632db31784463bef83100901b83cabc66ac137448405a4f63a8539ff78fa128d",
+    "definitions": [
+      "flatten",
+      "load_data",
+      "prepare"
+    ]
+  },
+  "part2/features.py": {
+    "sha256": "a25ae3a138e2a67b0d0a9cf6a1b47ddf038d869f4307b55c9aed10b560e7117f",
+    "definitions": [
+      "build_features"
+    ]
+  },
+  "part2/training.py": {
+    "sha256": "930f8890a45517bc72f258e90043d6a69b298df8aafad97d118aa3834b8eb8d8",
+    "definitions": [
+      "fit_classifiers",
+      "fit_features",
+      "predict"
+    ]
+  },
+  "part2/evaluation.py": {
+    "sha256": "dc52d78d913315f9973b7880b85cd1e3a0b5e46752dd11cfb44421f161b149f6",
+    "definitions": [
+      "evaluate"
+    ]
+  },
+  "part2/submission.py": {
+    "sha256": "fc4132da0e4d7013e7fc5bba8efb6fa76a3be0eb93a90494687c23d5b9ef4c89",
+    "definitions": [
+      "generate",
+      "validate_submission"
+    ]
+  },
+  "part2/audit.py": {
+    "sha256": "19fcc4a6b6e81281e12bd43599b6537f503a6222f011d93b08450302caab05b2",
+    "definitions": [
+      "audit"
+    ]
+  },
+  "part2/experiments.py": {
+    "sha256": "5d3be9ee2decc89eab5d3c0a11f19dd90637fd92e0f3df3e0d0c0562709fcbad",
+    "definitions": [
+      "run_modeling_experiments"
+    ]
+  },
+  "part2/report.py": {
+    "sha256": "9a1744613fe5d6a244832bbc144754dc431dae366a8df46301c755acd48e5744",
+    "definitions": [
+      "markdown_table",
+      "write_modeling_report"
+    ]
+  },
+  "part2/error_analysis.py": {
+    "sha256": "0305633df1de948b5179d683f01c69daf6cc7532734ec76ed773395256aaf21d",
+    "definitions": [
+      "build_reason_table",
+      "match_unsuccessful",
+      "summarize",
+      "summarize_groups"
+    ]
+  },
+  "part2/calibration.py": {
+    "sha256": "0ac578e3e4de786316fb8e5fe1db81aaed81d8f7e9a24f5dfa138e11b07255fd",
+    "definitions": [
+      "apply_sigmoids",
+      "calibrated_predict",
+      "comparison_interpretation",
+      "decision_scores",
+      "diagnostics",
+      "fit_sigmoids",
+      "grouped_folds",
+      "run_calibration_experiment",
+      "write_report"
+    ]
+  },
+  "CS5785_Midterm_Starter.ipynb": {
+    "sha256": "2e13b2f9fde81fdbee1a7f2dee67123331f532786bb8807f47917b0362fb0230",
+    "definitions": [],
+    "adaptation": "All original cells copied; output roots isolated, full-mode guards added, input cwd detection adapted."
+  },
+  "_packaging": {
+    "notebooks": [
+      "part1_reproduction.ipynb",
+      "part2_modeling.ipynb",
+      "part2_error_analysis.ipynb",
+      "part2_calibration.ipynb",
+      "historical_workflow_reproduction.ipynb"
+    ],
+    "original_sources_not_required_at_runtime": true,
+    "algorithms_verified_by_ast": 73,
+    "documented_adapted_definitions": [
+      {
+        "notebook": "part2_modeling.ipynb",
+        "source": "part2/experiments.py",
+        "definition": "main",
+        "exact_algorithm_ast_match": false,
+        "documented_notebook_adaptation": true
+      },
+      {
+        "notebook": "part2_modeling.ipynb",
+        "source": "part2/report.py",
+        "definition": "main",
+        "exact_algorithm_ast_match": false,
+        "documented_notebook_adaptation": true
+      },
+      {
+        "notebook": "part2_error_analysis.ipynb",
+        "source": "data_utils.py",
+        "definition": "load_data",
+        "exact_algorithm_ast_match": false,
+        "documented_notebook_adaptation": true
+      },
+      {
+        "notebook": "part2_calibration.ipynb",
+        "source": "part2/calibration.py",
+        "definition": "main",
+        "exact_algorithm_ast_match": false,
+        "documented_notebook_adaptation": true
+      },
+      {
+        "notebook": "part2_calibration.ipynb",
+        "source": "part2/calibration.py",
+        "definition": "write_report",
+        "exact_algorithm_ast_match": false,
+        "documented_notebook_adaptation": true
+      }
+    ],
+    "omissions": "CLI argument parsers, __main__ guards, original test runners, redundant report dispatch and original preservation utility; notebook orchestration and read-only checks replace these.",
+    "new_full_outputs": "part2/notebook_reproduction/",
+    "historical_workflow": "Every original cell copied; exact code checked after output-path/guard adaptation."
+  }
+}
