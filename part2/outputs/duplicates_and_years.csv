@@ -1,0 +1,4 @@
+split,exact_duplicate_rows,duplicate_trial_phase,multi_phase_trials,extra_phase_rows,year_min,year_median,year_max
+train,0,0,502,502,1993.0,2007.0,2013.0
+val,0,0,112,112,1995.0,2007.0,2013.0
+test,0,0,58,58,2014.0,2015.0,2021.0
