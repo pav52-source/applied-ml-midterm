@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Part 1 labeling: Prith and teammates</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17252d;
+      --muted: #53636e;
+      --line: #cbd6dc;
+      --paper: #f7f9fa;
+      --prith: #175d7d;
+      --prith-pale: #eaf4f8;
+      --team: #775222;
+      --team-pale: #fbf3e5;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 36px 0 64px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { font-size: clamp(1.7rem, 3vw, 2.45rem); line-height: 1.15; letter-spacing: -.025em; margin-bottom: 12px; }
+    h2 { font-size: 1.25rem; margin-bottom: 14px; }
+    h3 { font-size: 1rem; margin-bottom: 9px; }
+    p { max-width: 83ch; }
+    .lead, .note { color: var(--muted); }
+    .eyebrow { color: var(--prith); font-size: .8rem; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+    .shared { background: #fff; border: 1px solid var(--line); border-radius: 15px; padding: 20px 24px; margin: 26px 0 31px; text-align: center; box-shadow: 0 3px 14px #18323e0a; }
+    .shared strong { display: block; font-size: 1.1rem; }
+    .shared span { color: var(--muted); }
+    .paths { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; position: relative; }
+    .paths::before { content: ""; position: absolute; left: 25%; right: 25%; top: -16px; height: 16px; border: solid var(--line); border-width: 1px 1px 0; border-radius: 8px 8px 0 0; pointer-events: none; }
+    .path { border: 1px solid var(--line); border-radius: 16px; padding: 21px; background: #fff; min-width: 0; box-shadow: 0 3px 14px #18323e0a; }
+    .path.prith { border-top: 5px solid var(--prith); }
+    .path.team { border-top: 5px solid var(--team); }
+    .path-title { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 5px; }
+    .path-title h2 { margin: 0; }
+    .tag { font-size: .76rem; font-weight: 700; white-space: nowrap; border-radius: 99px; padding: 3px 9px; }
+    .prith .tag { color: var(--prith); background: var(--prith-pale); }
+    .team .tag { color: var(--team); background: var(--team-pale); }
+    .path-intro { color: var(--muted); font-size: .9rem; margin-bottom: 20px; }
+    .steps { list-style: none; padding: 0; margin: 0; }
+    .step { position: relative; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: #fff; }
+    .step + .step { margin-top: 24px; }
+    .step + .step::before, .branch::before, .merge::before { content: "↓"; position: absolute; color: var(--muted); font-weight: 700; top: -25px; left: calc(50% - 5px); }
+    .step strong { display: block; }
+    .step small { color: var(--muted); font-size: .875rem; }
+    .prith .step.accent { background: var(--prith-pale); border-color: #bad8e5; }
+    .team .step.accent { background: var(--team-pale); border-color: #e6d3b6; }
+    .branch { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 24px; }
+    .branch .step { margin: 0; height: 100%; }
+    .branch .step::before { content: none; }
+    .branch h3 { margin: 0 0 6px; }
+    .branch .step strong { font-size: .92rem; }
+    .merge { position: relative; margin-top: 24px; }
+    .merge .step { background: var(--prith-pale); border-color: #bad8e5; }
+    .stats { margin-top: 36px; }
+    .recent { margin-top: 38px; padding-top: 28px; border-top: 2px solid var(--line); }
+    .recent-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 18px 0 20px; }
+    .recent-card { background: #fff; border: 1px solid var(--line); border-radius: 11px; padding: 16px; }
+    .recent-card h3 { margin-bottom: 6px; }
+    .recent-card p { margin-bottom: 0; color: var(--muted); font-size: .92rem; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    table { border-collapse: collapse; width: 100%; min-width: 900px; font-variant-numeric: tabular-nums; }
+    caption { text-align: left; padding: 14px 16px 0; font-weight: 650; }
+    th, td { text-align: right; padding: 10px 12px; border-bottom: 1px solid #e6ecef; white-space: nowrap; }
+    th:first-child, td:first-child { text-align: left; }
+    thead th { color: var(--muted); font-size: .78rem; font-weight: 700; background: #f3f6f7; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:nth-child(even) { background: #f9fbfc; }
+    .unsubmitted { color: var(--muted); }
+    .reading { border-left: 3px solid var(--line); padding-left: 16px; margin-top: 22px; }
+    .sources { margin-top: 28px; font-size: .9rem; color: var(--muted); }
+    a { color: #175d7d; text-underline-offset: 2px; }
+    a:hover { text-decoration-thickness: 2px; }
+    @media (max-width: 760px) {
+      main { width: min(100% - 24px, 600px); padding-top: 25px; }
+      .paths { grid-template-columns: 1fr; gap: 16px; }
+      .paths::before { display: none; }
+      .path { padding: 17px; }
+      .branch { grid-template-columns: 1fr; }
+      .branch .step + .step { margin-top: 8px; }
+      .recent-grid { grid-template-columns: 1fr; }
+    }
+    @media print {
+      body { background: #fff; font-size: 10pt; }
+      main { width: 100%; padding: 0; }
+      .path, .shared { box-shadow: none; break-inside: avoid; }
+      .stats { break-before: page; }
+      .recent-card { break-inside: avoid; }
+      a { color: inherit; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="eyebrow">Part 1 · Label recovery</p>
+    <h1>How we label the missing stopping reasons</h1>
+    <p class="lead">Both methods start with the same trials and finish with five reason predictions. The difference is which missing labels they recover, and how those recovered labels train the final classifiers.</p>
+  </header>
+
+  <section class="shared" aria-label="Shared starting point">
+    <strong>1,171 training trials → scale 150 reason embeddings</strong>
+    <span>157 trials have observed reason labels · 1,014 have all five labels hidden · scaler fitted on training data</span>
+  </section>
+
+  <div class="paths" aria-label="Comparison of label recovery workflows">
+    <section class="path prith" aria-labelledby="prith-title">
+      <div class="path-title"><h2 id="prith-title">Prith’s selective blend</h2><span class="tag">Base: 14 clusters</span></div>
+      <p class="path-intro">The final classifiers still use the original 150 scaled embeddings.</p>
+      <ol class="steps">
+        <li class="step"><strong>Project, then cluster</strong><small>Kernel PCA: 50 dimensions; K-means: 14 clusters.</small></li>
+        <li class="step"><strong>Estimate cluster reason rates</strong><small>Smooth rates toward the observed-label frequencies.</small></li>
+      </ol>
+      <div class="branch" aria-label="Separate treatment for selected and protected reasons">
+        <div class="step accent">
+          <h3>Safety · Funding · Other</h3>
+          <strong>50% smoothed cluster rate + 50% vote from 3 originally labeled neighbors</strong>
+          <small>30% cutoff; assign 0 or 1 to all 1,014 masked trials. Train three logistic regressions with C=1; recovered rows get weight 0.25.</small>
+        </div>
+        <div class="step">
+          <h3>Efficacy · Recruitment</h3>
+          <strong>Keep the original cluster-only label mapping</strong>
+          <small>Unsmoothed rates with a 50% cutoff. 520 masked trials remain unresolved for each reason; keep their original cluster-only classifiers.</small>
+        </div>
+      </div>
+      <div class="merge"><div class="step"><strong>Combine all five predictions</strong><small>If no reason is predicted, select a fallback only from Safety, Funding, and Other. Final Efficacy and Recruitment decisions remain unchanged.</small></div></div>
+    </section>
+
+    <section class="path team" aria-labelledby="team-title">
+      <div class="path-title"><h2 id="team-title">Teammates’ selected hybrid</h2><span class="tag">10 clusters</span></div>
+      <p class="path-intro">The final classifiers also use the original 150 scaled embeddings.</p>
+      <ol class="steps">
+        <li class="step"><strong>Cluster the scaled embeddings</strong><small>K-means: 10 clusters in the original 150 dimensions.</small></li>
+        <li class="step"><strong>Estimate cluster reason rates</strong><small>Smooth rates toward the observed-label frequencies.</small></li>
+        <li class="step accent"><strong>Blend for all five reasons</strong><small>50% smoothed cluster rate + 50% vote from 3 originally labeled neighbors.</small></li>
+        <li class="step"><strong>Recover every masked row</strong><small>30% cutoff. If no reason is positive, choose the highest-scoring reason. All 1,014 rows receive five labels; zero remain unresolved.</small></li>
+        <li class="step"><strong>Train five logistic regressions</strong><small>C=0.1; recovered rows get weight 0.25.</small></li>
+      </ol>
+    </section>
+  </div>
+
+  <section class="stats" aria-labelledby="results-title">
+    <h2 id="results-title">Measured outcomes</h2>
+    <div class="table-wrap" role="region" aria-label="Scroll to view all score columns" tabindex="0">
+      <table>
+        <caption>Validation F1 by reason, with recorded public Kaggle scores</caption>
+        <thead><tr><th scope="col">Model</th><th scope="col">Sample F1</th><th scope="col">Macro F1</th><th scope="col">Safety</th><th scope="col">Funding</th><th scope="col">Efficacy</th><th scope="col">Recruitment</th><th scope="col">Other</th><th scope="col">Public F1</th></tr></thead>
+        <tbody>
+          <tr><td>Prith · 14 clusters</td><td><strong>0.9103</strong></td><td><strong>0.7925</strong></td><td>0.7059</td><td>0.6667</td><td><strong>0.9333</strong></td><td><strong>0.9899</strong></td><td><strong>0.6667</strong></td><td class="unsubmitted">Not submitted</td></tr>
+          <tr><td>Prith · 21 clusters</td><td>0.8932</td><td>0.7752</td><td>0.7059</td><td>0.6667</td><td>0.8667</td><td>0.9703</td><td><strong>0.6667</strong></td><td>0.84508*</td></tr>
+          <tr><td>Teammates · 10 clusters</td><td>0.8868</td><td>0.7792</td><td><strong>0.8889</strong></td><td>0.6667</td><td>0.8000</td><td>0.9524</td><td>0.5882</td><td><strong>0.87927</strong>†</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="reading">
+      <p><strong>What to discuss:</strong> The 14-cluster base model improves validation sample and macro F1 over the submitted 21-cluster version, but it has not been submitted. Later controlled experiments below improve its validation scores further. The 21-cluster version is Prith’s strongest submitted result. The teammates’ recorded public score is higher. The validation set has 78 trials, and these scores do not isolate which pipeline choice caused the public-score gap.</p>
+      <p class="note">* User-reported public score. † Public score recorded in team notes. “Unresolved” describes training labels left missing during recovery; no final test prediction is blank.</p>
+    </div>
+  </section>
+
+  <section class="recent" aria-labelledby="recent-title">
+    <h2 id="recent-title">Recent controlled experiments on the 14-cluster model</h2>
+    <p class="note">Each row starts from the model above it or from the stated Safety-only reference. These are validation results only; no CSV or Kaggle submission was made for the Safety-only or Efficacy/Recruitment fallback experiments.</p>
+    <div class="recent-grid">
+      <article class="recent-card">
+        <h3>1. Regularize Safety only</h3>
+        <p>Change only Safety’s logistic-regression C from 1 to 0.1. Funding, Efficacy, Recruitment, and Other retain the exact base classifiers and final decisions. Safety F1 rises from 0.7059 to 0.8889; sample F1 rises to 0.9231 and macro F1 to 0.8291.</p>
+      </article>
+      <article class="recent-card">
+        <h3>2. Fill only missing Efficacy and Recruitment labels</h3>
+        <p>Two separate trials start from Safety-only C=0.1. Each fills the same 520 unresolved training rows for Efficacy and Recruitment, then refits only those two classifiers. Safety, Funding, and Other final decisions stay fixed.</p>
+      </article>
+    </div>
+    <div class="table-wrap" role="region" aria-label="Scroll to view all recent experiment scores" tabindex="0">
+      <table>
+        <caption>Validation F1 for controlled experiments; none of these later variants was submitted</caption>
+        <thead><tr><th scope="col">K=14 variant</th><th scope="col">Sample F1</th><th scope="col">Macro F1</th><th scope="col">Safety</th><th scope="col">Funding</th><th scope="col">Efficacy</th><th scope="col">Recruitment</th><th scope="col">Other</th><th scope="col">E/R unresolved</th></tr></thead>
+        <tbody>
+          <tr><td>Base selective blend · C=1</td><td>0.9103</td><td>0.7925</td><td>0.7059</td><td>0.6667</td><td>0.9333</td><td>0.9899</td><td>0.6667</td><td>520 each</td></tr>
+          <tr><td>Safety-only C=0.1</td><td><strong>0.9231</strong></td><td><strong>0.8291</strong></td><td><strong>0.8889</strong></td><td>0.6667</td><td><strong>0.9333</strong></td><td><strong>0.9899</strong></td><td>0.6667</td><td>520 each</td></tr>
+          <tr><td>Safety-only + E/R cluster argmax</td><td>0.7906</td><td>0.6364</td><td>0.8889</td><td>0.6667</td><td>0.1333</td><td>0.8264</td><td>0.6667</td><td>0</td></tr>
+          <tr><td>Safety-only + E/R 3-neighbor vote</td><td>0.8735</td><td>0.7811</td><td>0.8889</td><td>0.6667</td><td>0.7742</td><td>0.9091</td><td>0.6667</td><td>0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="reading">
+      <p><strong>Cluster argmax fallback:</strong> All 520 missing E/R training rows were assigned Recruitment; none were assigned Efficacy. Efficacy and Recruitment validation F1 both fell sharply.</p>
+      <p><strong>Three-neighbor fallback:</strong> Among those same 520 training rows, 142 received Efficacy=1 and 364 received Recruitment=1. The two reasons are independent, so a row can receive both. Their validation F1 also fell relative to the Safety-only reference, although less than with cluster argmax.</p>
+      <p class="note">These “520 fallback rows” are missing <em>training labels</em> for Efficacy and Recruitment. They are unrelated to the rule that gives an otherwise empty <em>test prediction</em> a nonempty reason.</p>
+    </div>
+  </section>
+
+  <footer class="sources">
+    Sources: <a href="EXPERIMENT_LOG.md#k14-safety-only-c01-regularization">Safety-only experiment log</a> · <a href="EXPERIMENT_LOG.md#separate-efficacyrecruitment-cluster-argmax-fallback">cluster argmax experiment log</a> · <a href="EXPERIMENT_LOG.md#separate-efficacyrecruitment-3nn-fallback">3-neighbor experiment log</a> · <a href="Part1_KMeans_Experiments.ipynb">Prith’s notebook</a> · <a href="../../PART1_NOTES.md">team Part 1 notes</a> · <a href="../../part1-results/knn-experiment/best_augmented_candidate.json">teammates’ selected settings</a> · <a href="LABELING_COMPARISON_FLOWCHART.md">Markdown flowchart</a>
+  </footer>
+</main>
+</body>
+</html>
