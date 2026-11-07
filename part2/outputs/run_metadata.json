@@ -1,0 +1,35 @@
+{
+  "seed": 5785,
+  "best_experiment": "criteria_year0_pooled_C1",
+  "validation_log_loss": 0.5737533226117716,
+  "selection": "minimum overall validation log loss; no validation refit",
+  "threshold": 0.5,
+  "python": "3.14.8",
+  "pandas": "3.0.6",
+  "numpy": "2.5.3",
+  "scipy": "1.18.1",
+  "sklearn": "1.9.1",
+  "inputs_sha256": {
+    "outcome_test.csv": "39fef81bb60e084e75f4cc0947c31e8400dace18fe9b6a0ea0e266240b9f679f",
+    "outcome_train.csv": "7dabba85cc71515741efdb3a75ff7f1e87deb93b8fac410033ed962a6a314719",
+    "outcome_val.csv": "a49da3fbb168a18b776346c84f3b2d0bd137f6282935a260f811e47329d80a1b",
+    "part2_sample_submission.csv": "15c38fd743cdaac694f0e9fff34f0060c97b11cf682cd22bd3434ad2111f74a8",
+    "pathway_catalog.csv": "561f4e23ba21f70432095cca204b9f71cf57d3c8e883a5767dc792ba27d655d2"
+  },
+  "feature_settings": {
+    "min_df": 3,
+    "ngram_range": [
+      1,
+      2
+    ],
+    "sublinear_tf": true,
+    "criteria_max_features": 15000,
+    "other_max_features": 5000
+  },
+  "logistic_settings": {
+    "solver": "liblinear",
+    "max_iter": 2000,
+    "tol": 1e-05
+  },
+  "submission": "/Users/michaelherbstman/GradSchool/CS_5785/MidtermProject/applied-ml-midterm/part2/outputs/part2_submission.csv"
+}

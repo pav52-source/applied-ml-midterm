@@ -1,0 +1,163 @@
+phase,reason_group,reason_source,n_trials,n_predicted_success,false_success_rate,mean_predicted_success_probability,n_ground_truth,n_predictions,n_no_record,n_reasons_unavailable,candidate
+I,Safety,ground_truth,1,0,0.0,0.3100504536718613,1,0,0,0,baseline
+I,Safety,prediction,7,4,0.5714285714285714,0.5168546146299097,0,7,0,0,baseline
+I,Safety,no_record,0,0,,,0,0,0,0,baseline
+I,Funding,ground_truth,1,0,0.0,0.4522076887018731,1,0,0,0,baseline
+I,Funding,prediction,2,2,1.0,0.5351175452491241,0,2,0,0,baseline
+I,Funding,no_record,0,0,,,0,0,0,0,baseline
+I,Efficacy,ground_truth,0,0,,,0,0,0,0,baseline
+I,Efficacy,prediction,4,3,0.75,0.5670403144082761,0,4,0,0,baseline
+I,Efficacy,no_record,0,0,,,0,0,0,0,baseline
+I,Recruitment,ground_truth,2,1,0.5,0.35252761135757393,2,0,0,0,baseline
+I,Recruitment,prediction,22,8,0.36363636363636365,0.44413526688353966,0,22,0,0,baseline
+I,Recruitment,no_record,0,0,,,0,0,0,0,baseline
+I,Other,ground_truth,0,0,,,0,0,0,0,baseline
+I,Other,prediction,3,1,0.3333333333333333,0.41317677853918555,0,3,0,0,baseline
+I,Other,no_record,0,0,,,0,0,0,0,baseline
+I,no recorded stopping reason,ground_truth,0,0,,,0,0,0,0,baseline
+I,no recorded stopping reason,prediction,0,0,,,0,0,0,0,baseline
+I,no recorded stopping reason,no_record,28,13,0.4642857142857143,0.4744354556381734,0,0,28,0,baseline
+II,Safety,ground_truth,1,0,0.0,0.3318646966097134,1,0,0,0,baseline
+II,Safety,prediction,10,3,0.3,0.41417012809383946,0,10,0,0,baseline
+II,Safety,no_record,0,0,,,0,0,0,0,baseline
+II,Funding,ground_truth,1,0,0.0,0.4753040381766452,1,0,0,0,baseline
+II,Funding,prediction,3,0,0.0,0.29712808106540506,0,3,0,0,baseline
+II,Funding,no_record,0,0,,,0,0,0,0,baseline
+II,Efficacy,ground_truth,0,0,,,0,0,0,0,baseline
+II,Efficacy,prediction,15,6,0.4,0.4442132050427823,0,15,0,0,baseline
+II,Efficacy,no_record,0,0,,,0,0,0,0,baseline
+II,Recruitment,ground_truth,12,0,0.0,0.2624385163472171,12,0,0,0,baseline
+II,Recruitment,prediction,81,18,0.2222222222222222,0.3918135769924765,0,81,0,0,baseline
+II,Recruitment,no_record,0,0,,,0,0,0,0,baseline
+II,Other,ground_truth,3,0,0.0,0.4351647622742587,3,0,0,0,baseline
+II,Other,prediction,12,4,0.3333333333333333,0.41754216605198136,0,12,0,0,baseline
+II,Other,no_record,0,0,,,0,0,0,0,baseline
+II,no recorded stopping reason,ground_truth,0,0,,,0,0,0,0,baseline
+II,no recorded stopping reason,prediction,0,0,,,0,0,0,0,baseline
+II,no recorded stopping reason,no_record,144,52,0.3611111111111111,0.4211186075681972,0,0,144,0,baseline
+III,Safety,ground_truth,1,0,0.0,0.4282735681574307,1,0,0,0,baseline
+III,Safety,prediction,4,2,0.5,0.4969398888400622,0,4,0,0,baseline
+III,Safety,no_record,0,0,,,0,0,0,0,baseline
+III,Funding,ground_truth,0,0,,,0,0,0,0,baseline
+III,Funding,prediction,0,0,,,0,0,0,0,baseline
+III,Funding,no_record,0,0,,,0,0,0,0,baseline
+III,Efficacy,ground_truth,0,0,,,0,0,0,0,baseline
+III,Efficacy,prediction,8,7,0.875,0.6943798379639952,0,8,0,0,baseline
+III,Efficacy,no_record,0,0,,,0,0,0,0,baseline
+III,Recruitment,ground_truth,5,1,0.2,0.3169041281039926,5,0,0,0,baseline
+III,Recruitment,prediction,20,13,0.65,0.5608297062128637,0,20,0,0,baseline
+III,Recruitment,no_record,0,0,,,0,0,0,0,baseline
+III,Other,ground_truth,2,1,0.5,0.5591136158892359,2,0,0,0,baseline
+III,Other,prediction,7,5,0.7142857142857143,0.5969498222775921,0,7,0,0,baseline
+III,Other,no_record,0,0,,,0,0,0,0,baseline
+III,no recorded stopping reason,ground_truth,0,0,,,0,0,0,0,baseline
+III,no recorded stopping reason,prediction,0,0,,,0,0,0,0,baseline
+III,no recorded stopping reason,no_record,82,53,0.6463414634146342,0.5595279770623852,0,0,82,0,baseline
+I,Safety,ground_truth,1,0,0.0,0.2939721713950754,1,0,0,0,sigmoid_pooled
+I,Safety,prediction,7,4,0.5714285714285714,0.5147688145738514,0,7,0,0,sigmoid_pooled
+I,Safety,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+I,Funding,ground_truth,1,0,0.0,0.4438999762763995,1,0,0,0,sigmoid_pooled
+I,Funding,prediction,2,2,1.0,0.5325660887962811,0,2,0,0,sigmoid_pooled
+I,Funding,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+I,Efficacy,ground_truth,0,0,,,0,0,0,0,sigmoid_pooled
+I,Efficacy,prediction,4,3,0.75,0.5666091929879145,0,4,0,0,sigmoid_pooled
+I,Efficacy,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+I,Recruitment,ground_truth,2,1,0.5,0.34330641154991753,2,0,0,0,sigmoid_pooled
+I,Recruitment,prediction,22,8,0.36363636363636365,0.4360449037273924,0,22,0,0,sigmoid_pooled
+I,Recruitment,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+I,Other,ground_truth,0,0,,,0,0,0,0,sigmoid_pooled
+I,Other,prediction,3,1,0.3333333333333333,0.4042331881763263,0,3,0,0,sigmoid_pooled
+I,Other,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+I,no recorded stopping reason,ground_truth,0,0,,,0,0,0,0,sigmoid_pooled
+I,no recorded stopping reason,prediction,0,0,,,0,0,0,0,sigmoid_pooled
+I,no recorded stopping reason,no_record,28,13,0.4642857142857143,0.4687372897728635,0,0,28,0,sigmoid_pooled
+II,Safety,ground_truth,1,0,0.0,0.3166909564311715,1,0,0,0,sigmoid_pooled
+II,Safety,prediction,10,3,0.3,0.40579402849192403,0,10,0,0,sigmoid_pooled
+II,Safety,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+II,Funding,ground_truth,1,0,0.0,0.4685571800089344,1,0,0,0,sigmoid_pooled
+II,Funding,prediction,3,0,0.0,0.28309029267168856,0,3,0,0,sigmoid_pooled
+II,Funding,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+II,Efficacy,ground_truth,0,0,,,0,0,0,0,sigmoid_pooled
+II,Efficacy,prediction,15,6,0.4,0.4382181604883854,0,15,0,0,sigmoid_pooled
+II,Efficacy,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+II,Recruitment,ground_truth,12,0,0.0,0.24812447034352406,12,0,0,0,sigmoid_pooled
+II,Recruitment,prediction,81,15,0.18518518518518517,0.38131624438338013,0,81,0,0,sigmoid_pooled
+II,Recruitment,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+II,Other,ground_truth,3,0,0.0,0.42579440227166526,3,0,0,0,sigmoid_pooled
+II,Other,prediction,12,4,0.3333333333333333,0.41167068051579414,0,12,0,0,sigmoid_pooled
+II,Other,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+II,no recorded stopping reason,ground_truth,0,0,,,0,0,0,0,sigmoid_pooled
+II,no recorded stopping reason,prediction,0,0,,,0,0,0,0,sigmoid_pooled
+II,no recorded stopping reason,no_record,144,51,0.3541666666666667,0.41313293725405564,0,0,144,0,sigmoid_pooled
+III,Safety,ground_truth,1,0,0.0,0.4184079390306128,1,0,0,0,sigmoid_pooled
+III,Safety,prediction,4,2,0.5,0.49234625901907453,0,4,0,0,sigmoid_pooled
+III,Safety,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+III,Funding,ground_truth,0,0,,,0,0,0,0,sigmoid_pooled
+III,Funding,prediction,0,0,,,0,0,0,0,sigmoid_pooled
+III,Funding,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+III,Efficacy,ground_truth,0,0,,,0,0,0,0,sigmoid_pooled
+III,Efficacy,prediction,8,7,0.875,0.7007878641261931,0,8,0,0,sigmoid_pooled
+III,Efficacy,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+III,Recruitment,ground_truth,5,1,0.2,0.30498424126165097,5,0,0,0,sigmoid_pooled
+III,Recruitment,prediction,20,13,0.65,0.5601327906760042,0,20,0,0,sigmoid_pooled
+III,Recruitment,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+III,Other,ground_truth,2,1,0.5,0.558181950299917,2,0,0,0,sigmoid_pooled
+III,Other,prediction,7,5,0.7142857142857143,0.5979591076067486,0,7,0,0,sigmoid_pooled
+III,Other,no_record,0,0,,,0,0,0,0,sigmoid_pooled
+III,no recorded stopping reason,ground_truth,0,0,,,0,0,0,0,sigmoid_pooled
+III,no recorded stopping reason,prediction,0,0,,,0,0,0,0,sigmoid_pooled
+III,no recorded stopping reason,no_record,82,52,0.6341463414634146,0.5584950156578805,0,0,82,0,sigmoid_pooled
+I,Safety,ground_truth,1,0,0.0,0.342133833636732,1,0,0,0,sigmoid_by_phase
+I,Safety,prediction,7,4,0.5714285714285714,0.5210324945512147,0,7,0,0,sigmoid_by_phase
+I,Safety,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+I,Funding,ground_truth,1,0,0.0,0.467776546045465,1,0,0,0,sigmoid_by_phase
+I,Funding,prediction,2,2,1.0,0.5393676646577275,0,2,0,0,sigmoid_by_phase
+I,Funding,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+I,Efficacy,ground_truth,0,0,,,0,0,0,0,sigmoid_by_phase
+I,Efficacy,prediction,4,3,0.75,0.567149931435382,0,4,0,0,sigmoid_by_phase
+I,Efficacy,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+I,Recruitment,ground_truth,2,1,0.5,0.3725624103970427,2,0,0,0,sigmoid_by_phase
+I,Recruitment,prediction,22,8,0.36363636363636365,0.4597423171889471,0,22,0,0,sigmoid_by_phase
+I,Recruitment,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+I,Other,ground_truth,0,0,,,0,0,0,0,sigmoid_by_phase
+I,Other,prediction,3,1,0.3333333333333333,0.4312234531891237,0,3,0,0,sigmoid_by_phase
+I,Other,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+I,no recorded stopping reason,ground_truth,0,0,,,0,0,0,0,sigmoid_by_phase
+I,no recorded stopping reason,prediction,0,0,,,0,0,0,0,sigmoid_by_phase
+I,no recorded stopping reason,no_record,28,13,0.4642857142857143,0.4855085722864271,0,0,28,0,sigmoid_by_phase
+II,Safety,ground_truth,1,0,0.0,0.327662667170046,1,0,0,0,sigmoid_by_phase
+II,Safety,prediction,10,3,0.3,0.4128235619385422,0,10,0,0,sigmoid_by_phase
+II,Safety,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+II,Funding,ground_truth,1,0,0.0,0.4754611980609559,1,0,0,0,sigmoid_by_phase
+II,Funding,prediction,3,0,0.0,0.2929931575530085,0,3,0,0,sigmoid_by_phase
+II,Funding,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+II,Efficacy,ground_truth,0,0,,,0,0,0,0,sigmoid_by_phase
+II,Efficacy,prediction,15,6,0.4,0.4440869415268071,0,15,0,0,sigmoid_by_phase
+II,Efficacy,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+II,Recruitment,ground_truth,12,0,0.0,0.25792454700355466,12,0,0,0,sigmoid_by_phase
+II,Recruitment,prediction,81,18,0.2222222222222222,0.38972211925173017,0,81,0,0,sigmoid_by_phase
+II,Recruitment,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+II,Other,ground_truth,3,0,0.0,0.43403117852186107,3,0,0,0,sigmoid_by_phase
+II,Other,prediction,12,4,0.3333333333333333,0.4171542322493335,0,12,0,0,sigmoid_by_phase
+II,Other,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+II,no recorded stopping reason,ground_truth,0,0,,,0,0,0,0,sigmoid_by_phase
+II,no recorded stopping reason,prediction,0,0,,,0,0,0,0,sigmoid_by_phase
+II,no recorded stopping reason,no_record,144,53,0.3680555555555556,0.42014361944295436,0,0,144,0,sigmoid_by_phase
+III,Safety,ground_truth,1,0,0.0,0.3675062105767673,1,0,0,0,sigmoid_by_phase
+III,Safety,prediction,4,2,0.5,0.4597416005072126,0,4,0,0,sigmoid_by_phase
+III,Safety,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+III,Funding,ground_truth,0,0,,,0,0,0,0,sigmoid_by_phase
+III,Funding,prediction,0,0,,,0,0,0,0,sigmoid_by_phase
+III,Funding,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+III,Efficacy,ground_truth,0,0,,,0,0,0,0,sigmoid_by_phase
+III,Efficacy,prediction,8,7,0.875,0.6985039689902613,0,8,0,0,sigmoid_by_phase
+III,Efficacy,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+III,Recruitment,ground_truth,5,1,0.2,0.2596082074821199,5,0,0,0,sigmoid_by_phase
+III,Recruitment,prediction,20,12,0.6,0.5372660622840777,0,20,0,0,sigmoid_by_phase
+III,Recruitment,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+III,Other,ground_truth,2,1,0.5,0.5314343467923544,2,0,0,0,sigmoid_by_phase
+III,Other,prediction,7,4,0.5714285714285714,0.579499052080528,0,7,0,0,sigmoid_by_phase
+III,Other,no_record,0,0,,,0,0,0,0,sigmoid_by_phase
+III,no recorded stopping reason,ground_truth,0,0,,,0,0,0,0,sigmoid_by_phase
+III,no recorded stopping reason,prediction,0,0,,,0,0,0,0,sigmoid_by_phase
+III,no recorded stopping reason,no_record,82,47,0.573170731707317,0.5345708424890278,0,0,82,0,sigmoid_by_phase

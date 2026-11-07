@@ -1,0 +1,295 @@
+file,source_line,reference
+part2/part2_error_analysis.ipynb,3,"Analyze only validation label=0 trials. Match Part 2 trial_id to Part 1 ID, preserve multi-label groups, use valid truth before predictions, and distinguish no record from unresolved masked labels. The historical baseline analysis has 131 unresolved phase rows / 113 unique trials. Full mode regenerates the baseline and established Part 1 test predictions from CSVs, without filling any additional m"
+part2/part2_error_analysis.ipynb,19,"if not all((ROOT / name).is_dir() for name in ('part1-data', 'part2-data')):"
+part2/part2_error_analysis.ipynb,26,"for directory in ('part1-data', 'part2-data', 'outputs', 'part1-results', 'part2-results',"
+part2/part2_error_analysis.ipynb,70,assert frame.trial_id.notna().all()
+part2/part2_error_analysis.ipynb,72,"assert not frame.duplicated(['trial_id', 'phase']).any()"
+part2/part2_error_analysis.ipynb,73,assert frame.ID.eq(frame.trial_id + '_' + frame.phase).all()
+part2/part2_error_analysis.ipynb,77,assert frame.groupby('trial_id').label.nunique().max() == 1
+part2/part2_error_analysis.ipynb,79,"assert not set(a.trial_id).intersection(b.trial_id), 'Cross-split trial leakage'"
+part2/part2_error_analysis.ipynb,248,DATA_DIR = ROOT / 'part1-data'
+part2/part2_error_analysis.ipynb,249,OUTPUT_DIR = REPRO_ROOT / 'part1'
+part2/part2_error_analysis.ipynb,250,TRAIN_PATH = DATA_DIR / 'part1_train.csv'
+part2/part2_error_analysis.ipynb,251,VAL_PATH = DATA_DIR / 'part1_val.csv'
+part2/part2_error_analysis.ipynb,252,TEST_PATH = DATA_DIR / 'part1_test.csv'
+part2/part2_error_analysis.ipynb,462,"records.append(dict(trial_id=row.ID, part1_split=split,"
+part2/part2_error_analysis.ipynb,463,"reason_source='ground_truth' if valid else 'unavailable',"
+part2/part2_error_analysis.ipynb,465,reasons = pd.DataFrame(records).set_index('trial_id')
+part2/part2_error_analysis.ipynb,473,"if reasons.loc[row.ID, 'reason_source'] != 'ground_truth':"
+part2/part2_error_analysis.ipynb,474,"reasons.loc[row.ID, 'reason_source'] = 'prediction'"
+part2/part2_error_analysis.ipynb,486,"assert validation.ID.is_unique and not validation.duplicated(['trial_id', 'phase']).any()"
+part2/part2_error_analysis.ipynb,487,assert validation.trial_id.str.fullmatch(r'TR\d+').all()
+part2/part2_error_analysis.ipynb,488,assert validation.ID.eq(validation.trial_id + '_' + validation.phase).all()
+part2/part2_error_analysis.ipynb,494,"check = validation.merge(outcome[['ID', 'trial_id', 'phase', 'label']], on='ID',"
+part2/part2_error_analysis.ipynb,497,"for col in ('trial_id', 'phase', 'label'):"
+part2/part2_error_analysis.ipynb,500,"joined = unsuccessful.merge(reasons, on='trial_id', how='left', validate='many_to_one', indicator=True)"
+part2/part2_error_analysis.ipynb,501,joined['part1_match'] = joined.pop('_merge').eq('both')
+part2/part2_error_analysis.ipynb,502,joined['reason_source'] = joined.reason_source.fillna('no_record')
+part2/part2_error_analysis.ipynb,503,joined['part1_split'] = joined.part1_split.fillna('none')
+part2/part2_error_analysis.ipynb,504,"assert not joined.duplicated(['trial_id', 'phase']).any()"
+part2/part2_error_analysis.ipynb,517,"n_ground_truth=int(group.reason_source.eq('ground_truth').sum()),"
+part2/part2_error_analysis.ipynb,518,"n_predictions=int(group.reason_source.eq('prediction').sum()),"
+part2/part2_error_analysis.ipynb,519,"n_no_record=int(group.reason_source.eq('no_record').sum()),"
+part2/part2_error_analysis.ipynb,520,n_reasons_unavailable=int(group.reason_source.eq('unavailable').sum()))
+part2/part2_error_analysis.ipynb,532,**summarize(phase_rows.loc[phase_rows.reason_source.eq('unavailable')])))
+part2/part2_error_analysis.ipynb,534,mask = ~phase_rows.part1_match if reason == NO_REASON else phase_rows[reason].eq(1).fillna(False)
+part2/part2_error_analysis.ipynb,538,"source_rows.append(dict(phase=phase, reason_group=reason, reason_source=source,"
+part2/part2_error_analysis.ipynb,539,**summarize(group.loc[group.reason_source.eq(source)])))
+part2/part2_error_analysis.ipynb,544,"parts = {s: pd.read_csv(ROOT / 'part1-data' / f'part1_{s}.csv') for s in ('train','val','test')}"
+part2/part2_error_analysis.ipynb,550,"validation = outcome[['ID','trial_id','phase','label']].copy()"
+part2/part2_error_analysis.ipynb,560,predictions = pd.read_csv(ROOT / 'outputs' / 'part1_submission.csv')
+part2/part2_error_analysis.ipynb,565,"by_source=sources, trial_audit=joined, reason_lookup=reasons).items():"
+part2/part2_error_analysis.ipynb,573,assert len(joined) == 452 and joined.trial_id.nunique() == 398
+part2/part2_error_analysis.ipynb,574,unknown = joined.loc[joined.reason_source.eq('unavailable')]
+part2/part2_error_analysis.ipynb,575,assert len(unknown) == 131 and unknown.trial_id.nunique() == 113
+part2/part2_error_analysis.ipynb,578,"assert not joined.duplicated(['trial_id','phase']).any()"
+part2/part2_error_analysis.ipynb,581,((not r['part1_match']) if row.reason_group == NO_REASON else
+part2/ERROR_ANALYSIS.md,8,"trial_id, phase, true outcome, probability, and predicted_label at threshold 0.5."
+part2/ERROR_ANALYSIS.md,9,"Join Part 1 trial `ID` to Part 2 `trial_id`, never to the phase-suffixed ID."
+part2/ERROR_ANALYSIS.md,11,"Build a separate analysis-only reason table with unique trial_id, Safety, Funding,"
+part2/ERROR_ANALYSIS.md,24,Deduplicate trial_id within each phase. Multi-label trials contribute to every
+part2/audit.py,20,"balance.append(dict(split=split, phase=phase, rows=len(group), unique_trials=group.trial_id.nunique(),"
+part2/audit.py,26,"duplicate_trial_phase=int(frame.duplicated(['trial_id', 'phase']).sum()),"
+part2/audit.py,27,"multi_phase_trials=int((frame.groupby('trial_id').phase.nunique() > 1).sum()),"
+part2/audit.py,28,"extra_phase_rows=len(frame)-frame.trial_id.nunique(),"
+part2/audit.py,34,"for cols in [('trial_id',), ('criteria',), TEXT_COLUMNS]:"
+part2/audit.py,35,"aa, bb = (fa, fb) if cols == ('trial_id',) else (ca, cb)"
+part2/audit.py,45,"report = ['# Initial data audit', '', 'Text: criteria, diseases_cleaned, drugs, icdcodes. Additional available text/categorical fields: phase_detail, matched_drugs, drug_targets, drug_actions, drug_pathways, drug_smiles. Phase is categorical; start_year is numerical. ID and trial_id are matching keys, label is the binary target. Optional pathway_catalog has 2,501 rows and five columns; it is unuse"
+part2/part2_modeling.ipynb,19,"if not all((ROOT / name).is_dir() for name in ('part1-data', 'part2-data')):"
+part2/part2_modeling.ipynb,26,"for directory in ('part1-data', 'part2-data', 'outputs', 'part1-results', 'part2-results',"
+part2/part2_modeling.ipynb,70,assert frame.trial_id.notna().all()
+part2/part2_modeling.ipynb,72,"assert not frame.duplicated(['trial_id', 'phase']).any()"
+part2/part2_modeling.ipynb,73,assert frame.ID.eq(frame.trial_id + '_' + frame.phase).all()
+part2/part2_modeling.ipynb,77,assert frame.groupby('trial_id').label.nunique().max() == 1
+part2/part2_modeling.ipynb,79,"assert not set(a.trial_id).intersection(b.trial_id), 'Cross-split trial leakage'"
+part2/part2_modeling.ipynb,267,"balance.append(dict(split=split, phase=phase, rows=len(group), unique_trials=group.trial_id.nunique(),"
+part2/part2_modeling.ipynb,273,"duplicate_trial_phase=int(frame.duplicated(['trial_id', 'phase']).sum()),"
+part2/part2_modeling.ipynb,274,"multi_phase_trials=int((frame.groupby('trial_id').phase.nunique() > 1).sum()),"
+part2/part2_modeling.ipynb,275,"extra_phase_rows=len(frame)-frame.trial_id.nunique(),"
+part2/part2_modeling.ipynb,281,"for cols in [('trial_id',), ('criteria',), TEXT_COLUMNS]:"
+part2/part2_modeling.ipynb,282,"aa, bb = (fa, fb) if cols == ('trial_id',) else (ca, cb)"
+part2/part2_modeling.ipynb,292,"report = ['# Initial data audit', '', 'Text: criteria, diseases_cleaned, drugs, icdcodes. Additional available text/categorical fields: phase_detail, matched_drugs, drug_targets, drug_actions, drug_pathways, drug_smiles. Phase is categorical; start_year is numerical. ID and trial_id are matching keys, label is the binary target. Optional pathway_catalog has 2,501 rows and five columns; it is unuse"
+part2/part2_modeling.ipynb,339,"pred = val[['ID', 'trial_id', 'phase', 'label']].copy()"
+part2/part2_modeling.ipynb,371,"selected = val[['ID', 'trial_id', 'phase', 'label']].copy()"
+part2/test_error_analysis.py,21,"self.assertEqual(reasons.set_index('trial_id').loc['TR00002', 'reason_source'], 'unavailable')"
+part2/test_error_analysis.py,22,"self.assertTrue(reasons.set_index('trial_id').loc['TR00002', list(REASONS)].isna().all())"
+part2/test_error_analysis.py,24,"'trial_id': ['TR00001', 'TR00002', 'TR00004', 'TR00005', 'TR00001', 'TR00003'],"
+part2/test_error_analysis.py,28,validation['ID'] = validation.trial_id + '_' + validation.phase
+part2/test_error_analysis.py,30,"joined = match_unsuccessful(validation, validation[['ID', 'trial_id', 'phase', 'label']], reasons)"
+part2/error_analysis.py,25,"records.append(dict(trial_id=row.ID, part1_split=split,"
+part2/error_analysis.py,26,"reason_source='ground_truth' if valid else 'unavailable',"
+part2/error_analysis.py,28,reasons = pd.DataFrame(records).set_index('trial_id')
+part2/error_analysis.py,36,"if reasons.loc[row.ID, 'reason_source'] != 'ground_truth':"
+part2/error_analysis.py,37,"reasons.loc[row.ID, 'reason_source'] = 'prediction'"
+part2/error_analysis.py,46,"assert validation.ID.is_unique and not validation.duplicated(['trial_id', 'phase']).any()"
+part2/error_analysis.py,47,assert validation.trial_id.str.fullmatch(r'TR\d+').all()
+part2/error_analysis.py,48,assert validation.ID.eq(validation.trial_id + '_' + validation.phase).all()
+part2/error_analysis.py,54,"check = validation.merge(outcome[['ID', 'trial_id', 'phase', 'label']], on='ID',"
+part2/error_analysis.py,57,"for col in ('trial_id', 'phase', 'label'):"
+part2/error_analysis.py,60,"joined = unsuccessful.merge(reasons, on='trial_id', how='left', validate='many_to_one', indicator=True)"
+part2/error_analysis.py,61,joined['part1_match'] = joined.pop('_merge').eq('both')
+part2/error_analysis.py,62,joined['reason_source'] = joined.reason_source.fillna('no_record')
+part2/error_analysis.py,63,joined['part1_split'] = joined.part1_split.fillna('none')
+part2/error_analysis.py,64,"assert not joined.duplicated(['trial_id', 'phase']).any()"
+part2/error_analysis.py,74,"n_ground_truth=int(group.reason_source.eq('ground_truth').sum()),"
+part2/error_analysis.py,75,"n_predictions=int(group.reason_source.eq('prediction').sum()),"
+part2/error_analysis.py,76,"n_no_record=int(group.reason_source.eq('no_record').sum()),"
+part2/error_analysis.py,77,n_reasons_unavailable=int(group.reason_source.eq('unavailable').sum()))
+part2/error_analysis.py,86,**summarize(phase_rows.loc[phase_rows.reason_source.eq('unavailable')])))
+part2/error_analysis.py,88,mask = ~phase_rows.part1_match if reason == NO_REASON else phase_rows[reason].eq(1).fillna(False)
+part2/error_analysis.py,92,"source_rows.append(dict(phase=phase, reason_group=reason, reason_source=source,"
+part2/error_analysis.py,93,**summarize(group.loc[group.reason_source.eq(source)])))
+part2/error_analysis.py,100,"protected = sorted([*ROOT.joinpath('part1-data').glob('*'), *ROOT.joinpath('outputs').glob('*'),"
+part2/error_analysis.py,104,"parts = {s: pd.read_csv(ROOT / 'part1-data' / f'part1_{s}.csv') for s in ('train', 'val', 'test')}"
+part2/error_analysis.py,105,predictions = pd.read_csv(ROOT / 'outputs' / 'part1_submission.csv')
+part2/error_analysis.py,112,"by_source=sources, trial_audit=joined, reason_lookup=reasons).items():"
+part2/error_analysis.py,117,((not r['part1_match']) if row.reason_group == NO_REASON else
+part2/error_analysis.py,133,f'{len(joined)} unsuccessful phase rows represent {joined.trial_id.nunique()} unique trials. '
+part2/error_analysis.py,134,'Part 1 ID has format TR followed by digits and equals Part 2 trial_id. '
+part2/error_analysis.py,135,"'The phase-suffixed Part 2 ID is checked against trial_id + phase. Saved outcome labels, '"
+part2/error_analysis.py,140,'Predicted reasons come only from the existing outputs/part1_submission.csv for Part 1 test. '
+part2/error_analysis.py,186,'stopping_reason_reason_lookup.csv and stopping_reason_verification.json. '
+part2/error_analysis.py,193,"n_unique_unsuccessful_trials=joined.trial_id.nunique(),"
+part2/experiments.py,33,"pred = val[['ID', 'trial_id', 'phase', 'label']].copy()"
+part2/experiments.py,65,"selected = val[['ID', 'trial_id', 'phase', 'label']].copy()"
+part2/test_baselines.py,51,"x = prepare(train.assign(Safety=1, emb_0=2))"
+part2/test_baselines.py,53,"self.assertNotIn('emb_0', x)"
+part2/test_baselines.py,55,"self.assertNotIn('trial_id', x)"
+part2/part1_reproduction.ipynb,19,"if not all((ROOT / name).is_dir() for name in ('part1-data', 'part2-data')):"
+part2/part1_reproduction.ipynb,26,"for directory in ('part1-data', 'part2-data', 'outputs', 'part1-results', 'part2-results',"
+part2/part1_reproduction.ipynb,36,DATA_DIR = ROOT / 'part1-data'
+part2/part1_reproduction.ipynb,37,OUTPUT_DIR = REPRO_ROOT / 'part1'
+part2/part1_reproduction.ipynb,38,TRAIN_PATH = DATA_DIR / 'part1_train.csv'
+part2/part1_reproduction.ipynb,39,VAL_PATH = DATA_DIR / 'part1_val.csv'
+part2/part1_reproduction.ipynb,40,TEST_PATH = DATA_DIR / 'part1_test.csv'
+part2/part1_reproduction.ipynb,426,"submission.to_csv(OUTPUT_DIR / 'part1_submission.csv', index=False)"
+part2/part1_reproduction.ipynb,427,"print('Fresh submission saved:', OUTPUT_DIR / 'part1_submission.csv')"
+part2/part1_reproduction.ipynb,446,original_path = ROOT / 'outputs' / 'part1_submission.csv'
+part2/historical_workflow_reproduction.ipynb,19,"if not all((ROOT / name).is_dir() for name in ('part1-data', 'part2-data')):"
+part2/historical_workflow_reproduction.ipynb,26,"for directory in ('part1-data', 'part2-data', 'outputs', 'part1-results', 'part2-results',"
+part2/historical_workflow_reproduction.ipynb,47,"Use the project `.venv/bin/python` kernel. The CSV files are in `part1-data/` and `part2-data/` inside the midterm folder. Run from this folder or the parent workspace root. Baseline submission CSVs are saved in the midterm folder; Part 1 label recovery and comparisons are implemented below; Part 2 now includes outcome model comparison, train-only calibration, reason-group error analysis, and loca"
+part2/historical_workflow_reproduction.ipynb,61,"PART1_DIR = PROJECT_DIR / ""part1-data"""
+part2/historical_workflow_reproduction.ipynb,64,"reason_train = pd.read_csv(PART1_DIR / ""part1_train.csv"")"
+part2/historical_workflow_reproduction.ipynb,65,"reason_val = pd.read_csv(PART1_DIR / ""part1_val.csv"")"
+part2/historical_workflow_reproduction.ipynb,66,"reason_test = pd.read_csv(PART1_DIR / ""part1_test.csv"")"
+part2/historical_workflow_reproduction.ipynb,72,"pathway_catalog = pd.read_csv(PART1_DIR / ""pathway_catalog.csv"")"
+part2/historical_workflow_reproduction.ipynb,138,"RESULTS_DIR = HISTORICAL_OUTPUT / ""part1-results"""
+part2/historical_workflow_reproduction.ipynb,340,"reason_lookup = pd.concat([recovered_training, observed_validation, test_predictions], ignore_index=True)"
+part2/historical_workflow_reproduction.ipynb,341,assert reason_lookup.ID.is_unique
+part2/historical_workflow_reproduction.ipynb,342,"reason_lookup.to_csv(RESULTS_DIR / ""reason_lookup.csv"", index=False)"
+part2/historical_workflow_reproduction.ipynb,368,"(HISTORICAL_OUTPUT / ""writeup"" / ""part1_results.tex"").write_text(""\n"".join(table_rows) + ""\n"")"
+part2/historical_workflow_reproduction.ipynb,378,"(HISTORICAL_OUTPUT / ""writeup"" / ""part1_feature_results.tex"").write_text(""\n"".join(feature_rows) + ""\n"")"
+part2/historical_workflow_reproduction.ipynb,470,"save_inspection_figure(fig, ""part1_pca_clusters"")"
+part2/historical_workflow_reproduction.ipynb,488,"save_inspection_figure(fig, ""part1_pca_reasons"")"
+part2/historical_workflow_reproduction.ipynb,528,"save_inspection_figure(fig, ""part1_cluster_reason_heatmap"")"
+part2/historical_workflow_reproduction.ipynb,778,"_ = (HISTORICAL_OUTPUT / ""writeup"" / ""part1_knn_results.tex"").write_text(""\n"".join(knn_table_rows) + ""\n"")"
+part2/historical_workflow_reproduction.ipynb,791,"The original submission/model artifacts are frozen for comparison. The new hybrid candidate, recovered labels, all validation predictions, and settings are saved under `part1-results/knn-experiment/`. Clustering remains part of the hybrid, satisfying the unsupervised-method requirement; direct K-NN by itself would not. No test score or Kaggle submission is claimed."
+part2/historical_workflow_reproduction.ipynb,805,"part1_submission = reason_test[[""ID""]].copy()"
+part2/historical_workflow_reproduction.ipynb,806,"part1_submission[""Predicted""] = predicted_reasons"
+part2/historical_workflow_reproduction.ipynb,807,"part1_submission.to_csv(HISTORICAL_OUTPUT / ""part1_submission.csv"", index=False)"
+part2/historical_workflow_reproduction.ipynb,808,part1_submission.head()
+part2/historical_workflow_reproduction.ipynb,810,assert part1_submission.ID.equals(reason_test.ID)
+part2/historical_workflow_reproduction.ipynb,811,assert part1_submission.Predicted.str.len().gt(0).all()
+part2/historical_workflow_reproduction.ipynb,812,assert len(part1_submission) == 312
+part2/historical_workflow_reproduction.ipynb,843,"assert not (set(OUTCOME_RAW_FEATURES) & set(REASON_LABELS + [""ID"", ""trial_id"", ""label""]))"
+part2/historical_workflow_reproduction.ipynb,847,"assert not frame.duplicated([""trial_id"", ""phase""]).any()"
+part2/historical_workflow_reproduction.ipynb,850,assert set(left.trial_id).isdisjoint(right.trial_id)
+part2/historical_workflow_reproduction.ipynb,962,"Reproduce the starter: binary bag of words from criteria/diseases/drugs/ICD codes, separate C=1 logistic regression for each phase. Use training data only for vocabulary and coefficients. Match **unsuccessful validation trials only** to the latest Part 1 hybrid candidate, using `trial_id` and Part 1 `ID`."
+part2/historical_workflow_reproduction.ipynb,998,"baseline_outcome_validation = outcome_val[[""ID"", ""trial_id"", ""phase"", ""label""]].copy()"
+part2/historical_workflow_reproduction.ipynb,1007,"part1_candidate_dir = RESULTS_DIR / ""knn-experiment"""
+part2/historical_workflow_reproduction.ipynb,1008,"part1_lineage = json.loads((part1_candidate_dir / ""best_augmented_candidate.json"").read_text())"
+part2/historical_workflow_reproduction.ipynb,1009,"reason_train_hybrid = pd.read_csv(part1_candidate_dir / ""best_augmented_training_labels.csv"")"
+part2/historical_workflow_reproduction.ipynb,1012,"reason_test_hybrid = pd.read_csv(part1_candidate_dir / ""best_augmented_candidate_submission.csv"")"
+part2/historical_workflow_reproduction.ipynb,1015,"reason_test_hybrid[""label_source""] = ""predicted_part1_test"""
+part2/historical_workflow_reproduction.ipynb,1016,part2_reason_lookup = pd.concat([
+part2/historical_workflow_reproduction.ipynb,1019,assert part2_reason_lookup.ID.is_unique and len(part2_reason_lookup) == 1561
+part2/historical_workflow_reproduction.ipynb,1020,"assert part2_reason_lookup[REASON_LABELS].isin([0, 1]).all().all()"
+part2/historical_workflow_reproduction.ipynb,1021,assert part2_reason_lookup[REASON_LABELS].sum(axis=1).gt(0).all()
+part2/historical_workflow_reproduction.ipynb,1022,"part2_reason_lookup.to_csv(PART2_RESULTS / ""part1_hybrid_reason_lookup.csv"", index=False)"
+part2/historical_workflow_reproduction.ipynb,1023,"_ = (PART2_RESULTS / ""part1_reason_lineage.json"").write_text(json.dumps(part1_lineage, indent=2) + ""\n"")"
+part2/historical_workflow_reproduction.ipynb,1028,"assert not failed.duplicated([""trial_id"", ""phase""]).any()"
+part2/historical_workflow_reproduction.ipynb,1029,"failed = failed.merge(part2_reason_lookup.rename(columns={""ID"": ""trial_id""}), on=""trial_id"","
+part2/historical_workflow_reproduction.ipynb,1034,"failed.label_source.isin([""pseudo_train"", ""predicted_part1_test""])],"
+part2/historical_workflow_reproduction.ipynb,1121,"part2_selected_validation = outcome_val[[""ID"", ""trial_id"", ""phase"", ""label""]].copy()"
+part2/part2_calibration.ipynb,19,"if not all((ROOT / name).is_dir() for name in ('part1-data', 'part2-data')):"
+part2/part2_calibration.ipynb,26,"for directory in ('part1-data', 'part2-data', 'outputs', 'part1-results', 'part2-results',"
+part2/part2_calibration.ipynb,70,assert frame.trial_id.notna().all()
+part2/part2_calibration.ipynb,72,"assert not frame.duplicated(['trial_id', 'phase']).any()"
+part2/part2_calibration.ipynb,73,assert frame.ID.eq(frame.trial_id + '_' + frame.phase).all()
+part2/part2_calibration.ipynb,77,assert frame.groupby('trial_id').label.nunique().max() == 1
+part2/part2_calibration.ipynb,79,"assert not set(a.trial_id).intersection(b.trial_id), 'Cross-split trial leakage'"
+part2/part2_calibration.ipynb,330,"folds = list(splitter.split(train, strata, groups=train.trial_id))"
+part2/part2_calibration.ipynb,333,assert not set(train.iloc[fit].trial_id) & set(train.iloc[held].trial_id)
+part2/part2_calibration.ipynb,397,assert saved.ID.equals(val.ID) and saved.trial_id.equals(val.trial_id)
+part2/part2_calibration.ipynb,426,"n_trials=group.trial_id.nunique(), successes=int(group.label.sum()),"
+part2/part2_calibration.ipynb,430,"assert pd.DataFrame({'trial_id': train.trial_id, 'fold': fold_ids}).groupby('trial_id').fold.nunique().max() == 1"
+part2/part2_calibration.ipynb,431,"oof = train[['ID', 'trial_id', 'phase', 'label']].copy()"
+part2/part2_calibration.ipynb,458,"record = val[['ID', 'trial_id', 'phase', 'label']].copy()"
+part2/part2_calibration.ipynb,500,"method='5-fold StratifiedGroupKFold, phase x outcome strata, trial_id groups',"
+part2/part2_calibration.ipynb,559,'Five StratifiedGroupKFold splits use training trial_id as the group and phase × label as the '
+part2/part2_calibration.ipynb,655,assert not set(train.iloc[fit].trial_id) & set(train.iloc[held].trial_id)
+part2/part2_calibration.ipynb,657,assert fold_table.groupby('trial_id').fold.nunique().max() == 1
+part2/test_calibration.py,29,self.assertFalse(set(train.iloc[fit].trial_id) & set(train.iloc[held].trial_id))
+part2/test_calibration.py,60,"self.assertEqual(scores.groupby('trial_id').fold.nunique().max(), 1)"
+part2/NOTEBOOK_README.md,12,"| `part1_reproduction.ipynb` | root `config.py`, `data_utils.py`, `models.py`, `pseudo_labeling.py`, `experiments.py`, `submission.py` | Standardization; K-Means/GMM; confidence/support filters; weighted LR; supervised, cluster-feature, per-label and random controls; threshold tuning/fallback; RBF SVM; K sweep; F1 tables and submission |"
+part2/NOTEBOOK_README.md,39,"- `part1-data/part1_train.csv`, `part1_val.csv`, `part1_test.csv`;"
+part2/NOTEBOOK_README.md,42,- `part1-data/pathway_catalog.csv` and `part2-data/pathway_catalog.csv`
+part2/NOTEBOOK_README.md,46,"`part1/`, `part2_modeling/`, `part2_error_analysis/`, `part2_calibration/`, and"
+part2/NOTEBOOK_README.md,48,"`outputs/`, `part1-results/`, `part2-results/`, `part2/outputs/`,"
+part2/NOTEBOOK_README.md,111,"matplotlib 3.11.2, nbclient 0.11.0 (see original `part1-results/environment.json`"
+part2/NOTEBOOK_README.md,131,Full Part 1 creates `notebook_reproduction/part1/part1_submission.csv`.
+part2/data.py,18,assert frame.trial_id.notna().all()
+part2/data.py,20,"assert not frame.duplicated(['trial_id', 'phase']).any()"
+part2/data.py,21,assert frame.ID.eq(frame.trial_id + '_' + frame.phase).all()
+part2/data.py,25,assert frame.groupby('trial_id').label.nunique().max() == 1
+part2/data.py,27,"assert not set(a.trial_id).intersection(b.trial_id), 'Cross-split trial leakage'"
+part2/calibration.py,66,"folds = list(splitter.split(train, strata, groups=train.trial_id))"
+part2/calibration.py,69,assert not set(train.iloc[fit].trial_id) & set(train.iloc[held].trial_id)
+part2/calibration.py,112,"paths = [p for directory in ('part1-data', 'outputs', 'part2', 'part2-data')"
+part2/calibration.py,125,assert saved.ID.equals(val.ID) and saved.trial_id.equals(val.trial_id)
+part2/calibration.py,151,"n_trials=group.trial_id.nunique(), successes=int(group.label.sum()),"
+part2/calibration.py,155,"assert pd.DataFrame({'trial_id': train.trial_id, 'fold': fold_ids}).groupby('trial_id').fold.nunique().max() == 1"
+part2/calibration.py,156,"oof = train[['ID', 'trial_id', 'phase', 'label']].copy()"
+part2/calibration.py,183,"record = val[['ID', 'trial_id', 'phase', 'label']].copy()"
+part2/calibration.py,225,"method='5-fold StratifiedGroupKFold, phase x outcome strata, trial_id groups',"
+part2/calibration.py,278,'Five StratifiedGroupKFold splits use training trial_id as the group and phase × label as the '
+part2/calibration_outputs/report.md,35,Five StratifiedGroupKFold splits use training trial_id as the group and phase × label as the stratification target. Trial IDs never cross fit/held folds; combined-phase rows stay together. Every fold refits the original TF-IDF/phase preprocessing and the same C=1 classifier using only that fold’s fit rows. Exactly one out-of-fold raw decision margin is generated per training row. No validation tex
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,19,"if not all((ROOT / name).is_dir() for name in ('part1-data', 'part2-data')):"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,26,"for directory in ('part1-data', 'part2-data', 'outputs', 'part1-results', 'part2-results',"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,47,"Use the project `.venv/bin/python` kernel. The CSV files are in `part1-data/` and `part2-data/` inside the midterm folder. Run from this folder or the parent workspace root. Baseline submission CSVs are saved in the midterm folder; Part 1 label recovery and comparisons are implemented below; Part 2 now includes outcome model comparison, train-only calibration, reason-group error analysis, and loca"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,61,"PART1_DIR = PROJECT_DIR / ""part1-data"""
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,64,"reason_train = pd.read_csv(PART1_DIR / ""part1_train.csv"")"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,65,"reason_val = pd.read_csv(PART1_DIR / ""part1_val.csv"")"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,66,"reason_test = pd.read_csv(PART1_DIR / ""part1_test.csv"")"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,72,"pathway_catalog = pd.read_csv(PART1_DIR / ""pathway_catalog.csv"")"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,138,"RESULTS_DIR = HISTORICAL_OUTPUT / ""part1-results"""
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,340,"reason_lookup = pd.concat([recovered_training, observed_validation, test_predictions], ignore_index=True)"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,341,assert reason_lookup.ID.is_unique
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,342,"reason_lookup.to_csv(RESULTS_DIR / ""reason_lookup.csv"", index=False)"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,368,"(HISTORICAL_OUTPUT / ""writeup"" / ""part1_results.tex"").write_text(""\n"".join(table_rows) + ""\n"")"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,378,"(HISTORICAL_OUTPUT / ""writeup"" / ""part1_feature_results.tex"").write_text(""\n"".join(feature_rows) + ""\n"")"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,470,"save_inspection_figure(fig, ""part1_pca_clusters"")"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,488,"save_inspection_figure(fig, ""part1_pca_reasons"")"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,528,"save_inspection_figure(fig, ""part1_cluster_reason_heatmap"")"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,778,"_ = (HISTORICAL_OUTPUT / ""writeup"" / ""part1_knn_results.tex"").write_text(""\n"".join(knn_table_rows) + ""\n"")"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,791,"The original submission/model artifacts are frozen for comparison. The new hybrid candidate, recovered labels, all validation predictions, and settings are saved under `part1-results/knn-experiment/`. Clustering remains part of the hybrid, satisfying the unsupervised-method requirement; direct K-NN by itself would not. No test score or Kaggle submission is claimed."
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,805,"part1_submission = reason_test[[""ID""]].copy()"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,806,"part1_submission[""Predicted""] = predicted_reasons"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,807,"part1_submission.to_csv(HISTORICAL_OUTPUT / ""part1_submission.csv"", index=False)"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,808,part1_submission.head()
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,810,assert part1_submission.ID.equals(reason_test.ID)
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,811,assert part1_submission.Predicted.str.len().gt(0).all()
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,812,assert len(part1_submission) == 312
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,843,"assert not (set(OUTCOME_RAW_FEATURES) & set(REASON_LABELS + [""ID"", ""trial_id"", ""label""]))"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,847,"assert not frame.duplicated([""trial_id"", ""phase""]).any()"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,850,assert set(left.trial_id).isdisjoint(right.trial_id)
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,962,"Reproduce the starter: binary bag of words from criteria/diseases/drugs/ICD codes, separate C=1 logistic regression for each phase. Use training data only for vocabulary and coefficients. Match **unsuccessful validation trials only** to the latest Part 1 hybrid candidate, using `trial_id` and Part 1 `ID`."
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,998,"baseline_outcome_validation = outcome_val[[""ID"", ""trial_id"", ""phase"", ""label""]].copy()"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1007,"part1_candidate_dir = RESULTS_DIR / ""knn-experiment"""
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1008,"part1_lineage = json.loads((part1_candidate_dir / ""best_augmented_candidate.json"").read_text())"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1009,"reason_train_hybrid = pd.read_csv(part1_candidate_dir / ""best_augmented_training_labels.csv"")"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1012,"reason_test_hybrid = pd.read_csv(part1_candidate_dir / ""best_augmented_candidate_submission.csv"")"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1015,"reason_test_hybrid[""label_source""] = ""predicted_part1_test"""
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1016,part2_reason_lookup = pd.concat([
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1019,assert part2_reason_lookup.ID.is_unique and len(part2_reason_lookup) == 1561
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1020,"assert part2_reason_lookup[REASON_LABELS].isin([0, 1]).all().all()"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1021,assert part2_reason_lookup[REASON_LABELS].sum(axis=1).gt(0).all()
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1022,"part2_reason_lookup.to_csv(PART2_RESULTS / ""part1_hybrid_reason_lookup.csv"", index=False)"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1023,"_ = (PART2_RESULTS / ""part1_reason_lineage.json"").write_text(json.dumps(part1_lineage, indent=2) + ""\n"")"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1028,"assert not failed.duplicated([""trial_id"", ""phase""]).any()"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1029,"failed = failed.merge(part2_reason_lookup.rename(columns={""ID"": ""trial_id""}), on=""trial_id"","
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1034,"failed.label_source.isin([""pseudo_train"", ""predicted_part1_test""])],"
+part2/.ipynb_checkpoints/historical_workflow_reproduction-checkpoint.ipynb,1121,"part2_selected_validation = outcome_val[[""ID"", ""trial_id"", ""phase"", ""label""]].copy()"
+part2/.ipynb_checkpoints/part1_reproduction-checkpoint.ipynb,19,"if not all((ROOT / name).is_dir() for name in ('part1-data', 'part2-data')):"
+part2/.ipynb_checkpoints/part1_reproduction-checkpoint.ipynb,26,"for directory in ('part1-data', 'part2-data', 'outputs', 'part1-results', 'part2-results',"
+part2/.ipynb_checkpoints/part1_reproduction-checkpoint.ipynb,36,DATA_DIR = ROOT / 'part1-data'
+part2/.ipynb_checkpoints/part1_reproduction-checkpoint.ipynb,37,OUTPUT_DIR = REPRO_ROOT / 'part1'
+part2/.ipynb_checkpoints/part1_reproduction-checkpoint.ipynb,38,TRAIN_PATH = DATA_DIR / 'part1_train.csv'
+part2/.ipynb_checkpoints/part1_reproduction-checkpoint.ipynb,39,VAL_PATH = DATA_DIR / 'part1_val.csv'
+part2/.ipynb_checkpoints/part1_reproduction-checkpoint.ipynb,40,TEST_PATH = DATA_DIR / 'part1_test.csv'
+part2/.ipynb_checkpoints/part1_reproduction-checkpoint.ipynb,426,"submission.to_csv(OUTPUT_DIR / 'part1_submission.csv', index=False)"
+part2/.ipynb_checkpoints/part1_reproduction-checkpoint.ipynb,427,"print('Fresh submission saved:', OUTPUT_DIR / 'part1_submission.csv')"
+part2/.ipynb_checkpoints/part1_reproduction-checkpoint.ipynb,446,original_path = ROOT / 'outputs' / 'part1_submission.csv'
+part2/outputs/stopping_reason_report.md,7,"452 unsuccessful phase rows represent 398 unique trials. Part 1 ID has format TR followed by digits and equals Part 2 trial_id. The phase-suffixed Part 2 ID is checked against trial_id + phase. Saved outcome labels, phases and trial IDs are checked against outcome_val.csv with a one-to-one join. Part 1 split IDs are disjoint and unique; saved reason predictions cover exactly Part 1 test IDs. The r"
+part2/outputs/stopping_reason_report.md,9,"Available binary ground-truth labels from Part 1 train/val take precedence. Predicted reasons come only from the existing outputs/part1_submission.csv for Part 1 test. Part 1 train labels masked as -100 remain unknown: no saved predictions or fitted Part 1 model were found for them, and Part 1 training is not rerun. Only trials absent from all three Part 1 splits enter “no recorded stopping reason"
+part2/outputs/stopping_reason_report.md,70,"Outputs: stopping_reason_groups.csv (18 requested cells), stopping_reason_coverage.csv, stopping_reason_unresolved.csv, stopping_reason_by_source.csv, stopping_reason_trial_audit.csv, stopping_reason_reason_lookup.csv and stopping_reason_verification.json. The last two audit tables retain unknown reasons as missing values. No reasons are predictive inputs. Analysis stops here; no model improvement"
+part2/outputs/data_audit.md,3,"Text: criteria, diseases_cleaned, drugs, icdcodes. Additional available text/categorical fields: phase_detail, matched_drugs, drug_targets, drug_actions, drug_pathways, drug_smiles. Phase is categorical; start_year is numerical. ID and trial_id are matching keys, label is the binary target. Optional pathway_catalog has 2,501 rows and five columns; it is unused."
+part2/outputs/data_audit.md,12,train  8037         trial_id     str
+part2/outputs/data_audit.md,27,val  1013         trial_id     str
+part2/outputs/data_audit.md,42,test  1500         trial_id     str
+part2/outputs/data_audit.md,62,train                             trial_id        0
+part2/outputs/data_audit.md,81,val                             trial_id        0
+part2/outputs/data_audit.md,100,test                             trial_id        0
+part2/outputs/data_audit.md,206,train     val                                 trial_id            0
+part2/outputs/data_audit.md,209,train    test                                 trial_id            0
+part2/outputs/data_audit.md,212,val    test                                 trial_id            0
+part2/notebook_reproduction/part2_modeling/data_audit.md,3,"Text: criteria, diseases_cleaned, drugs, icdcodes. Additional available text/categorical fields: phase_detail, matched_drugs, drug_targets, drug_actions, drug_pathways, drug_smiles. Phase is categorical; start_year is numerical. ID and trial_id are matching keys, label is the binary target. Optional pathway_catalog has 2,501 rows and five columns; it is unused."
+part2/notebook_reproduction/part2_modeling/data_audit.md,12,train  8037         trial_id     str
+part2/notebook_reproduction/part2_modeling/data_audit.md,27,val  1013         trial_id     str
+part2/notebook_reproduction/part2_modeling/data_audit.md,42,test  1500         trial_id     str
+part2/notebook_reproduction/part2_modeling/data_audit.md,62,train                             trial_id        0
+part2/notebook_reproduction/part2_modeling/data_audit.md,81,val                             trial_id        0
+part2/notebook_reproduction/part2_modeling/data_audit.md,100,test                             trial_id        0
+part2/notebook_reproduction/part2_modeling/data_audit.md,206,train     val                                 trial_id            0
+part2/notebook_reproduction/part2_modeling/data_audit.md,209,train    test                                 trial_id            0
+part2/notebook_reproduction/part2_modeling/data_audit.md,212,val    test                                 trial_id            0

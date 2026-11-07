@@ -1,0 +1,4 @@
+phase,n_trials,n_predicted_success,false_success_rate,mean_predicted_success_probability,n_ground_truth,n_predictions,n_no_record,n_reasons_unavailable
+I,64,28,0.4375,0.46539525540071214,4,7,28,25
+II,265,78,0.2943396226415094,0.4070162888064627,16,27,144,78
+III,123,78,0.6341463414634146,0.5550624420622391,7,6,82,28

@@ -1,0 +1,4 @@
+phase,reason_group,n_trials,n_predicted_success,false_success_rate,mean_predicted_success_probability,n_ground_truth,n_predictions,n_no_record,n_reasons_unavailable
+I,matched Part 1 record; reasons unavailable,25,11,0.44,0.47033338096943106,0,0,0,25
+II,matched Part 1 record; reasons unavailable,78,15,0.19230769230769232,0.3907158017567629,0,0,0,78
+III,matched Part 1 record; reasons unavailable,28,18,0.6428571428571429,0.5679086265038885,0,0,0,28

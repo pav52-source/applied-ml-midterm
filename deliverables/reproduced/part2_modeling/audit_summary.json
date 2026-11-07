@@ -1,0 +1,988 @@
+{
+  "schema": [
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "ID",
+      "dtype": "str"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "trial_id",
+      "dtype": "str"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "phase",
+      "dtype": "str"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "phase_detail",
+      "dtype": "str"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "criteria",
+      "dtype": "str"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "diseases_cleaned",
+      "dtype": "str"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "drugs",
+      "dtype": "str"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "icdcodes",
+      "dtype": "str"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "matched_drugs",
+      "dtype": "str"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "drug_targets",
+      "dtype": "str"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "drug_actions",
+      "dtype": "str"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "drug_pathways",
+      "dtype": "str"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "drug_smiles",
+      "dtype": "str"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "start_year",
+      "dtype": "float64"
+    },
+    {
+      "split": "train",
+      "rows": 8037,
+      "column": "label",
+      "dtype": "int64"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "ID",
+      "dtype": "str"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "trial_id",
+      "dtype": "str"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "phase",
+      "dtype": "str"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "phase_detail",
+      "dtype": "str"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "criteria",
+      "dtype": "str"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "diseases_cleaned",
+      "dtype": "str"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "drugs",
+      "dtype": "str"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "icdcodes",
+      "dtype": "str"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "matched_drugs",
+      "dtype": "str"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "drug_targets",
+      "dtype": "str"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "drug_actions",
+      "dtype": "str"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "drug_pathways",
+      "dtype": "str"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "drug_smiles",
+      "dtype": "str"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "start_year",
+      "dtype": "float64"
+    },
+    {
+      "split": "val",
+      "rows": 1013,
+      "column": "label",
+      "dtype": "int64"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "ID",
+      "dtype": "str"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "trial_id",
+      "dtype": "str"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "phase",
+      "dtype": "str"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "phase_detail",
+      "dtype": "str"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "criteria",
+      "dtype": "str"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "diseases_cleaned",
+      "dtype": "str"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "drugs",
+      "dtype": "str"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "icdcodes",
+      "dtype": "str"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "matched_drugs",
+      "dtype": "str"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "drug_targets",
+      "dtype": "str"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "drug_actions",
+      "dtype": "str"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "drug_pathways",
+      "dtype": "str"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "drug_smiles",
+      "dtype": "str"
+    },
+    {
+      "split": "test",
+      "rows": 1500,
+      "column": "start_year",
+      "dtype": "float64"
+    }
+  ],
+  "missing_values": [
+    {
+      "split": "train",
+      "column": "ID",
+      "missing": 0
+    },
+    {
+      "split": "train",
+      "column": "trial_id",
+      "missing": 0
+    },
+    {
+      "split": "train",
+      "column": "phase",
+      "missing": 0
+    },
+    {
+      "split": "train",
+      "column": "phase_detail",
+      "missing": 0
+    },
+    {
+      "split": "train",
+      "column": "criteria",
+      "missing": 2
+    },
+    {
+      "split": "train",
+      "column": "diseases_cleaned",
+      "missing": 0
+    },
+    {
+      "split": "train",
+      "column": "drugs",
+      "missing": 0
+    },
+    {
+      "split": "train",
+      "column": "icdcodes",
+      "missing": 0
+    },
+    {
+      "split": "train",
+      "column": "matched_drugs",
+      "missing": 4361
+    },
+    {
+      "split": "train",
+      "column": "drug_targets",
+      "missing": 4361
+    },
+    {
+      "split": "train",
+      "column": "drug_actions",
+      "missing": 4394
+    },
+    {
+      "split": "train",
+      "column": "drug_pathways",
+      "missing": 4361
+    },
+    {
+      "split": "train",
+      "column": "drug_smiles",
+      "missing": 4361
+    },
+    {
+      "split": "train",
+      "column": "start_year",
+      "missing": 21
+    },
+    {
+      "split": "train",
+      "column": "label",
+      "missing": 0
+    },
+    {
+      "split": "train",
+      "column": "criteria_empty_after_parsing",
+      "missing": 2
+    },
+    {
+      "split": "train",
+      "column": "diseases_cleaned_empty_after_parsing",
+      "missing": 0
+    },
+    {
+      "split": "train",
+      "column": "drugs_empty_after_parsing",
+      "missing": 0
+    },
+    {
+      "split": "train",
+      "column": "icdcodes_empty_after_parsing",
+      "missing": 0
+    },
+    {
+      "split": "val",
+      "column": "ID",
+      "missing": 0
+    },
+    {
+      "split": "val",
+      "column": "trial_id",
+      "missing": 0
+    },
+    {
+      "split": "val",
+      "column": "phase",
+      "missing": 0
+    },
+    {
+      "split": "val",
+      "column": "phase_detail",
+      "missing": 0
+    },
+    {
+      "split": "val",
+      "column": "criteria",
+      "missing": 0
+    },
+    {
+      "split": "val",
+      "column": "diseases_cleaned",
+      "missing": 0
+    },
+    {
+      "split": "val",
+      "column": "drugs",
+      "missing": 0
+    },
+    {
+      "split": "val",
+      "column": "icdcodes",
+      "missing": 0
+    },
+    {
+      "split": "val",
+      "column": "matched_drugs",
+      "missing": 526
+    },
+    {
+      "split": "val",
+      "column": "drug_targets",
+      "missing": 526
+    },
+    {
+      "split": "val",
+      "column": "drug_actions",
+      "missing": 529
+    },
+    {
+      "split": "val",
+      "column": "drug_pathways",
+      "missing": 526
+    },
+    {
+      "split": "val",
+      "column": "drug_smiles",
+      "missing": 526
+    },
+    {
+      "split": "val",
+      "column": "start_year",
+      "missing": 6
+    },
+    {
+      "split": "val",
+      "column": "label",
+      "missing": 0
+    },
+    {
+      "split": "val",
+      "column": "criteria_empty_after_parsing",
+      "missing": 0
+    },
+    {
+      "split": "val",
+      "column": "diseases_cleaned_empty_after_parsing",
+      "missing": 0
+    },
+    {
+      "split": "val",
+      "column": "drugs_empty_after_parsing",
+      "missing": 0
+    },
+    {
+      "split": "val",
+      "column": "icdcodes_empty_after_parsing",
+      "missing": 0
+    },
+    {
+      "split": "test",
+      "column": "ID",
+      "missing": 0
+    },
+    {
+      "split": "test",
+      "column": "trial_id",
+      "missing": 0
+    },
+    {
+      "split": "test",
+      "column": "phase",
+      "missing": 0
+    },
+    {
+      "split": "test",
+      "column": "phase_detail",
+      "missing": 0
+    },
+    {
+      "split": "test",
+      "column": "criteria",
+      "missing": 0
+    },
+    {
+      "split": "test",
+      "column": "diseases_cleaned",
+      "missing": 0
+    },
+    {
+      "split": "test",
+      "column": "drugs",
+      "missing": 0
+    },
+    {
+      "split": "test",
+      "column": "icdcodes",
+      "missing": 0
+    },
+    {
+      "split": "test",
+      "column": "matched_drugs",
+      "missing": 910
+    },
+    {
+      "split": "test",
+      "column": "drug_targets",
+      "missing": 910
+    },
+    {
+      "split": "test",
+      "column": "drug_actions",
+      "missing": 910
+    },
+    {
+      "split": "test",
+      "column": "drug_pathways",
+      "missing": 910
+    },
+    {
+      "split": "test",
+      "column": "drug_smiles",
+      "missing": 910
+    },
+    {
+      "split": "test",
+      "column": "start_year",
+      "missing": 0
+    },
+    {
+      "split": "test",
+      "column": "criteria_empty_after_parsing",
+      "missing": 0
+    },
+    {
+      "split": "test",
+      "column": "diseases_cleaned_empty_after_parsing",
+      "missing": 0
+    },
+    {
+      "split": "test",
+      "column": "drugs_empty_after_parsing",
+      "missing": 0
+    },
+    {
+      "split": "test",
+      "column": "icdcodes_empty_after_parsing",
+      "missing": 0
+    }
+  ],
+  "class_balance": [
+    {
+      "split": "train",
+      "phase": "overall",
+      "rows": 8037,
+      "unique_trials": 7535,
+      "successes": 4466,
+      "success_rate": 0.5556799800920742
+    },
+    {
+      "split": "train",
+      "phase": "I",
+      "rows": 1012,
+      "unique_trials": 1012,
+      "successes": 573,
+      "success_rate": 0.5662055335968379
+    },
+    {
+      "split": "train",
+      "phase": "II",
+      "rows": 3950,
+      "unique_trials": 3950,
+      "successes": 1884,
+      "success_rate": 0.4769620253164557
+    },
+    {
+      "split": "train",
+      "phase": "III",
+      "rows": 3075,
+      "unique_trials": 3075,
+      "successes": 2009,
+      "success_rate": 0.6533333333333333
+    },
+    {
+      "split": "val",
+      "phase": "overall",
+      "rows": 1013,
+      "unique_trials": 901,
+      "successes": 561,
+      "success_rate": 0.5538005923000987
+    },
+    {
+      "split": "val",
+      "phase": "I",
+      "rows": 149,
+      "unique_trials": 149,
+      "successes": 85,
+      "success_rate": 0.5704697986577181
+    },
+    {
+      "split": "val",
+      "phase": "II",
+      "rows": 501,
+      "unique_trials": 501,
+      "successes": 236,
+      "success_rate": 0.47105788423153694
+    },
+    {
+      "split": "val",
+      "phase": "III",
+      "rows": 363,
+      "unique_trials": 363,
+      "successes": 240,
+      "success_rate": 0.6611570247933884
+    },
+    {
+      "split": "test",
+      "phase": "overall",
+      "rows": 1500,
+      "unique_trials": 1442,
+      "successes": null,
+      "success_rate": null
+    },
+    {
+      "split": "test",
+      "phase": "I",
+      "rows": 500,
+      "unique_trials": 500,
+      "successes": null,
+      "success_rate": null
+    },
+    {
+      "split": "test",
+      "phase": "II",
+      "rows": 500,
+      "unique_trials": 500,
+      "successes": null,
+      "success_rate": null
+    },
+    {
+      "split": "test",
+      "phase": "III",
+      "rows": 500,
+      "unique_trials": 500,
+      "successes": null,
+      "success_rate": null
+    }
+  ],
+  "start_year_counts": [
+    {
+      "split": "train",
+      "start_year": 1993.0,
+      "rows": 2
+    },
+    {
+      "split": "train",
+      "start_year": 1994.0,
+      "rows": 5
+    },
+    {
+      "split": "train",
+      "start_year": 1995.0,
+      "rows": 8
+    },
+    {
+      "split": "train",
+      "start_year": 1996.0,
+      "rows": 12
+    },
+    {
+      "split": "train",
+      "start_year": 1997.0,
+      "rows": 24
+    },
+    {
+      "split": "train",
+      "start_year": 1998.0,
+      "rows": 41
+    },
+    {
+      "split": "train",
+      "start_year": 1999.0,
+      "rows": 44
+    },
+    {
+      "split": "train",
+      "start_year": 2000.0,
+      "rows": 56
+    },
+    {
+      "split": "train",
+      "start_year": 2001.0,
+      "rows": 114
+    },
+    {
+      "split": "train",
+      "start_year": 2002.0,
+      "rows": 214
+    },
+    {
+      "split": "train",
+      "start_year": 2003.0,
+      "rows": 349
+    },
+    {
+      "split": "train",
+      "start_year": 2004.0,
+      "rows": 587
+    },
+    {
+      "split": "train",
+      "start_year": 2005.0,
+      "rows": 779
+    },
+    {
+      "split": "train",
+      "start_year": 2006.0,
+      "rows": 1194
+    },
+    {
+      "split": "train",
+      "start_year": 2007.0,
+      "rows": 1285
+    },
+    {
+      "split": "train",
+      "start_year": 2008.0,
+      "rows": 925
+    },
+    {
+      "split": "train",
+      "start_year": 2009.0,
+      "rows": 362
+    },
+    {
+      "split": "train",
+      "start_year": 2010.0,
+      "rows": 884
+    },
+    {
+      "split": "train",
+      "start_year": 2011.0,
+      "rows": 707
+    },
+    {
+      "split": "train",
+      "start_year": 2012.0,
+      "rows": 349
+    },
+    {
+      "split": "train",
+      "start_year": 2013.0,
+      "rows": 75
+    },
+    {
+      "split": "train",
+      "start_year": NaN,
+      "rows": 21
+    },
+    {
+      "split": "val",
+      "start_year": 1995.0,
+      "rows": 2
+    },
+    {
+      "split": "val",
+      "start_year": 1996.0,
+      "rows": 2
+    },
+    {
+      "split": "val",
+      "start_year": 1997.0,
+      "rows": 4
+    },
+    {
+      "split": "val",
+      "start_year": 1998.0,
+      "rows": 5
+    },
+    {
+      "split": "val",
+      "start_year": 1999.0,
+      "rows": 8
+    },
+    {
+      "split": "val",
+      "start_year": 2000.0,
+      "rows": 6
+    },
+    {
+      "split": "val",
+      "start_year": 2001.0,
+      "rows": 17
+    },
+    {
+      "split": "val",
+      "start_year": 2002.0,
+      "rows": 22
+    },
+    {
+      "split": "val",
+      "start_year": 2003.0,
+      "rows": 42
+    },
+    {
+      "split": "val",
+      "start_year": 2004.0,
+      "rows": 68
+    },
+    {
+      "split": "val",
+      "start_year": 2005.0,
+      "rows": 101
+    },
+    {
+      "split": "val",
+      "start_year": 2006.0,
+      "rows": 160
+    },
+    {
+      "split": "val",
+      "start_year": 2007.0,
+      "rows": 141
+    },
+    {
+      "split": "val",
+      "start_year": 2008.0,
+      "rows": 109
+    },
+    {
+      "split": "val",
+      "start_year": 2009.0,
+      "rows": 45
+    },
+    {
+      "split": "val",
+      "start_year": 2010.0,
+      "rows": 121
+    },
+    {
+      "split": "val",
+      "start_year": 2011.0,
+      "rows": 93
+    },
+    {
+      "split": "val",
+      "start_year": 2012.0,
+      "rows": 53
+    },
+    {
+      "split": "val",
+      "start_year": 2013.0,
+      "rows": 8
+    },
+    {
+      "split": "val",
+      "start_year": NaN,
+      "rows": 6
+    },
+    {
+      "split": "test",
+      "start_year": 2014.0,
+      "rows": 484
+    },
+    {
+      "split": "test",
+      "start_year": 2015.0,
+      "rows": 457
+    },
+    {
+      "split": "test",
+      "start_year": 2016.0,
+      "rows": 296
+    },
+    {
+      "split": "test",
+      "start_year": 2017.0,
+      "rows": 200
+    },
+    {
+      "split": "test",
+      "start_year": 2018.0,
+      "rows": 54
+    },
+    {
+      "split": "test",
+      "start_year": 2019.0,
+      "rows": 6
+    },
+    {
+      "split": "test",
+      "start_year": 2020.0,
+      "rows": 2
+    },
+    {
+      "split": "test",
+      "start_year": 2021.0,
+      "rows": 1
+    }
+  ],
+  "duplicates_and_years": [
+    {
+      "split": "train",
+      "exact_duplicate_rows": 0,
+      "duplicate_trial_phase": 0,
+      "multi_phase_trials": 502,
+      "extra_phase_rows": 502,
+      "year_min": 1993.0,
+      "year_median": 2007.0,
+      "year_max": 2013.0
+    },
+    {
+      "split": "val",
+      "exact_duplicate_rows": 0,
+      "duplicate_trial_phase": 0,
+      "multi_phase_trials": 112,
+      "extra_phase_rows": 112,
+      "year_min": 1995.0,
+      "year_median": 2007.0,
+      "year_max": 2013.0
+    },
+    {
+      "split": "test",
+      "exact_duplicate_rows": 0,
+      "duplicate_trial_phase": 0,
+      "multi_phase_trials": 58,
+      "extra_phase_rows": 58,
+      "year_min": 2014.0,
+      "year_median": 2015.0,
+      "year_max": 2021.0
+    }
+  ],
+  "cross_split_overlap": [
+    {
+      "split_a": "train",
+      "split_b": "val",
+      "key": "trial_id",
+      "shared_keys": 0
+    },
+    {
+      "split_a": "train",
+      "split_b": "val",
+      "key": "criteria",
+      "shared_keys": 7
+    },
+    {
+      "split_a": "train",
+      "split_b": "val",
+      "key": "criteria+diseases_cleaned+drugs+icdcodes",
+      "shared_keys": 1
+    },
+    {
+      "split_a": "train",
+      "split_b": "test",
+      "key": "trial_id",
+      "shared_keys": 0
+    },
+    {
+      "split_a": "train",
+      "split_b": "test",
+      "key": "criteria",
+      "shared_keys": 0
+    },
+    {
+      "split_a": "train",
+      "split_b": "test",
+      "key": "criteria+diseases_cleaned+drugs+icdcodes",
+      "shared_keys": 0
+    },
+    {
+      "split_a": "val",
+      "split_b": "test",
+      "key": "trial_id",
+      "shared_keys": 0
+    },
+    {
+      "split_a": "val",
+      "split_b": "test",
+      "key": "criteria",
+      "shared_keys": 0
+    },
+    {
+      "split_a": "val",
+      "split_b": "test",
+      "key": "criteria+diseases_cleaned+drugs+icdcodes",
+      "shared_keys": 0
+    }
+  ]
+}
