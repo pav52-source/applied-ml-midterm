@@ -247,11 +247,10 @@ T/P: observed/predicted reason counts. No record means no Part 1 match;
 groups overlap, and -- denotes an empty group.}
 \label{tab:reasons}
 \end{table}
-Despite improved overall log loss, the model still mistakes many failed trials
-for successes in several Phase III groups and in the Phase I Efficacy group
-(Table~\ref{tab:reasons}). Small groups and reliance on predicted stopping
-reasons limit how confidently we can attribute these errors to a particular
-reason.
+The improved overall score hides a clear weakness: the model predicts success
+for every failed trial in the Phase I and III Efficacy groups
+(Table~\ref{tab:reasons}). These groups are small and their Efficacy labels are
+all predicted, so this finding needs confirmation with observed stopping reasons.
 
 \section{Discussion}
 \paragraph{Complementary but separate tasks.}
