@@ -7,109 +7,166 @@
 \graphicspath{{figures/}}
 \newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
 \title{Clinical-Trial Stopping Reasons and Outcomes:\\Semi-Supervised Prediction and Calibrated Classification}
-\author{\todo{Part 1 contributor: full name} \and \todo{Part 2 contributor: full name}\\
+\author{Prithviraj Vishwawkarma \and Jonathan Tumalle \and Michael Herbstman\\
 CS5785 / ORIE5750 / ECE5414, Cornell University, Fall 2026}
 \begin{document}
 \maketitle
-\noindent\textbf{Responsibilities.} Part 1 contributor: reason-label preprocessing,
-semi-supervised recovery, classifier experiments and predictions. Part 2 contributor:
-outcome modeling, calibration and reason-based error analysis.
-\todo{Confirm full names, responsibilities and any additional team members.}
+\noindent\textbf{Responsibilities.} All three contributors independently explored approaches
+to both parts of the project. We compared our results and selected the best-performing
+approaches for the final models. We also used common elements of our approaches to
+guide further improvements.
 
 \begin{abstract}
-We study stopping-reason prediction and trial-outcome classification using
-semi-supervised learning and calibrated classification. For five overlapping stopping reasons, a K-Means/3-neighbor
-hybrid followed by weighted logistic regression achieves validation sample F1
-0.88675 and macro F1 0.77923. For trial success, pooled eligibility-text TF-IDF
-logistic regression with phase encoding achieves validation log loss 0.57375;
-training-only, trial-grouped sigmoid calibration modestly improves it to 0.57221.
-Predicted reasons enable recorded-reason coverage in the outcome error analysis. Probability metrics improve modestly, while some small
-reason groups retain high false-success rates. Temporal shift, predicted-reason
-error and repeated validation selection limit generalization claims.
+We study how to predict clinical-trial stopping reasons and outcomes using
+semi-supervised learning and calibrated classification. For five overlapping
+stopping reasons, a hybrid of K-Means and three-nearest neighbors, followed by
+weighted logistic regression, achieves a validation sample F1 of 0.88675 and
+macro F1 of 0.77923. Its public Kaggle F1 score is 0.87927. To predict
+trial success, we use pooled logistic regression
+with eligibility-text TF-IDF features and phase encoding. It achieves a validation
+log loss of 0.57375. Sigmoid calibration reduces this to 0.57221; the calibration
+uses only training data and groups observations by trial. The calibrated model
+achieves a Kaggle log loss score of 0.59854. Using predicted stopping
+reasons, we could examine errors for every trial that appeared in both parts of the
+study. In some small groups of trials, the model often predicted success when the
+trials had actually failed. These results may not hold as well for other trials
+because trials change over time, predicted stopping reasons can be wrong, and
+choosing models repeatedly on the same validation set can make performance look
+better than it actually is.
 \end{abstract}
 
 \section{Methods}
 \subsection{Data and leakage controls}
-We use only the supplied assignment data~\cite{assignment}. Part 1 has 1,171
-training trials (157 visible labels; 1,014 rows masked as $-100$), 78 validation
-trials and 312 test trials. Reasons are Safety, Funding, Efficacy, Recruitment
-and Other; several may apply. Labeled trials start earlier on average than unlabeled trials (2001.72 versus 2006.42), so observed label priors may not represent the masked population. Part 2 has 8,037/1,013/1,500 train/validation/test
-phase rows. Validation phases I/II/III have 149/501/363 rows; test has 500 each.
-Repeated combined-phase trials stay within one supplied split. IDs match records
-but are never predictive features. No deep learning or external outcome labels
-are used.
+We use only the data supplied for the assignment~\cite{assignment}. Part 1
+contains 1,171 training trials, 78 validation trials, and 312 test trials. Among
+the training trials, 157 have visible stopping-reason labels and 1,014 have
+labels masked as $-100$. A trial can have more than one of five reasons:
+Safety, Funding, Efficacy, Recruitment, and Other. Visible labels mostly come
+from older trials: 76\% of labeled trials started before 2005, compared with
+17\% of masked trials. This could make the visible labels less representative
+if stopping reasons change over time.
+
+In Part 2, each row represents one phase of a trial. There are 8,037 training
+rows, 1,013 validation rows, and 1,500 test rows. The validation set contains
+149 Phase I rows, 501 Phase II rows, and 363 Phase III rows; the test set has
+500 rows per phase. All rows from the same trial stay together in the training,
+validation, or test set, so we do not evaluate the model on another phase of a
+trial it trained on. We use trial IDs to match records when examining the
+model's mistakes.
 
 Neither outcome training nor calibration uses reason labels, embeddings,
 predictions, or their derived groups.
 
 \subsection{Part 1: recovery and classification}
-Standardize the 150 reason embeddings on all training rows. Fit K-Means with
-$K\in\{5,10,20\}$, k-means++ initialization, 10 starts, tolerance $10^{-4}$,
-300 iterations and seed 42. Compare diagonal GMMs with three starts, tolerance
-$10^{-3}$, 200 iterations and covariance regularization $10^{-5}$.
-For hard/soft membership $r_{ik}$ and observed reason prior $\pi_j$, estimate
+We standardize the 150 reason-embedding features using all training trials,
+then group trials with similar embeddings. We compare K-Means and Gaussian
+mixture models with $K\in\{5,10,20\}$ clusters. The mixture models use diagonal
+covariance matrices.
+K-Means uses k-means++ initialization, 10 starts, a tolerance of $10^{-4}$,
+at most 300 iterations, and seed 42. The mixture models use three starts,
+a tolerance of $10^{-3}$, at most 200 iterations, and covariance regularization
+of $10^{-5}$. We use the labeled trials in each cluster to estimate a score
+for each stopping reason. We smooth these scores by combining the cluster's
+labeled examples with how common each reason is across all labeled training
+trials. This prevents a cluster with very few labeled examples from producing
+extreme scores based on those examples alone.
+For trial $i$'s cluster membership $r_{ik}$ (hard for K-Means, soft for mixture
+models) and observed reason frequency $\pi_j$, the score is
 \begin{equation}
 q_{kj}=\frac{\sum_{i\in L}r_{ik}y_{ij}+2\pi_j}{\sum_{i\in L}r_{ik}+2}.
 \end{equation}
-Threshold the recovered scores at 0.3 or 0.5; if none crosses, assign the
-highest-scoring reason. Preserve all observed labels. Fit five L2 logistic
-regressions (liblinear, at most 1,000 iterations, seed 42) with $C\in\{0.1,1\}$
-and pseudo-row weight 0.25 or 1. Observed rows have weight 1. Final decisions
-use 0.5 with the same nonempty fallback.
+We use the cluster scores to fill in missing stopping reasons, comparing cutoffs
+of 0.3 and 0.5. A trial receives every reason that meets the cutoff, or its
+highest-scoring reason if none qualifies. We then combine these estimated labels
+with the unchanged observed labels to train one logistic regression classifier
+per reason. Because estimated labels can be wrong, we compare weights
+$w\in\{0.25,1\}$ for them, keeping observed-label weight at 1. The lower weight
+limits their influence on classifier training. We compare L2 regularization
+settings $C\in\{0.1,1\}$ (liblinear, at most 1,000 iterations, seed 42).
+For final predictions, we assign all reasons with scores of at least 0.5,
+keeping the highest-scoring reason if none qualifies.
 
-The 70-setting initial suite includes supervised controls, 48 cluster-augmented
-settings, and added-year/text ablations with $C\in\{0.1,1,10\}$. Text/drug TF-IDF
-uses minimum frequency 3, up to 3,000 unigrams and sublinear term frequency;
-all transformations fit training only. PCA is diagnostic, not clustering input.
-Four Funding-only threshold controls (0.30/0.20/0.15/0.10) hold the other reasons
-fixed. Twenty-five local-recovery controls compare direct K-NN, K-NN recovery,
-and cluster/local hybrid recovery with $K\in\{3,5,9,15\}$ and uniform/distance
-voting, plus matched supervised LR. This gives 99 evaluated configurations.
+We test whether labels recovered with K-Means or Gaussian mixture models improve
+logistic regression over training on observed labels alone. Because recovery
+produces no Funding labels, we inspect PCA plots and reason frequencies within
+clusters to investigate. Funding scores remain below the recovery cutoff, but
+lowering it adds false positives without finding more Funding cases in validation.
+This motivates K-nearest neighbors (K-NN), which uses nearby labeled trials to
+recover reasons at a finer scale than whole clusters. We compare direct K-NN
+predictions, K-NN label recovery followed by logistic regression, and a blend of
+K-NN and K-Means scores followed by logistic regression. A matched logistic
+regression control trained only on observed labels tests whether recovery helps.
+The Funding comparison uses cutoffs $\{0.30,0.20,0.15,0.10\}$; K-NN uses
+$K\in\{3,5,9,15\}$ with uniform or distance-weighted votes.
 
-The selected hybrid equally averages scores from the best 10-cluster model
-and three uniform neighbors among the 157 labeled training trials. Recover
-masked labels at 0.3 with the fallback, then fit LR with $C=0.1$ and pseudo-weight
-0.25. Select by validation sample F1, then macro F1. K-Means/GMM and feature
-construction use standard scikit-learn implementations~\cite{clustering,tfidf}.
+Separately, we test whether trial year and TF-IDF text features add useful
+information beyond the embeddings, comparing regularization settings
+$C\in\{0.1,1,10\}$. TF-IDF downweights words common across trials, while
+sublinear term frequency reduces the influence of repeated words within a trial.
+We retain up to 3,000 unigrams appearing in at least three training trials.
+
+We select the model with the highest validation sample F1, using macro F1 to
+break ties. The selected hybrid averages K-Means scores from 10 clusters with
+K-NN scores from three equally weighted labeled neighbors. This combines broader
+cluster patterns with evidence from similar individual trials. We recover masked
+labels at a cutoff of 0.3, assigning the highest-scoring reason if none qualifies,
+then train logistic regression with $C=0.1$ and recovered-label weight 0.25.
+K-Means, Gaussian mixture models, and feature construction use scikit-learn
+implementations~\cite{clustering,tfidf}.
 
 \subsection{Part 2: fixed model and controlled experiments}
-First predict each phase's training success prior. Compare 36 LR settings:
-three text sets (criteria; diseases/drugs/ICD; all four), $C=0.1/1/10$, year
-on/off, and pooled versus independent phase models. Safely parse list-valued
-text; missing text becomes empty. Each field has training-fitted unigram/bigram
-TF-IDF with minimum frequency 3, sublinear TF, L2 normalization, at most 15,000
-criteria features or 5,000 per other field. Pooled models include one-hot phase;
-per-phase models fit independent transforms. Year uses training-median imputation,
-missingness indicators and scaling. LR uses liblinear, tolerance $10^{-5}$,
-at most 2,000 iterations and seed 5785, without class weights.
+We first use each phase's training success rate as a baseline. To learn from
+trial descriptions, we compare logistic regression with three TF-IDF feature
+sets: eligibility criteria, diseases/drugs/ICD codes, and all four fields.
+We test $C\in\{0.1,1,10\}$, with and without trial year, and compare a pooled
+model that includes phase with separate models for each phase. This tests whether
+sharing information across phases works better than learning them independently.
 
-Select minimum overall validation log loss without a validation refit. The winner
-uses criteria plus phase, pooled $C=1$, no year. Overall validation loss is
-row-weighted; report equal-phase mean separately because test phases are balanced.
-F1 uses probability $\geq0.5$; ROC-AUC and average precision (AP) use success
-probabilities. AP is not trapezoidal PR area.
+Each text field uses training-fitted unigram/bigram TF-IDF with minimum document
+frequency 3, sublinear TF, and L2 normalization. We cap criteria features at
+15,000 and other fields at 5,000 each, parse list-valued fields, and treat missing
+text as empty. The pooled model uses one-hot phase encoding; separate models
+learn their own text representations. We fill missing years with the training
+median, flag missing values, and scale year. Logistic regression uses liblinear,
+tolerance $10^{-5}$, at most 2,000 iterations, and seed 5785, without class weights.
+
+We select the lowest overall validation log loss and do not refit on validation
+data. The selected model pools phases, using criteria TF-IDF and phase encoding
+with $C=1$, without year. Overall loss gives each row equal weight; we also report
+an equal-phase mean because the test set has the same number of rows per phase.
+F1 uses a success-probability cutoff of 0.5. ROC-AUC and average precision (AP)
+use the probabilities directly; AP is our PR-AUC measure, not trapezoidal PR area.
 
 \subsection{Training-only probability calibration}
-Generate exactly one out-of-fold margin for every training row using five
-shuffled StratifiedGroupKFold folds, grouping by trial ID and approximately
-balancing phase/outcome strata (seed 5785). Each fold refits the same TF-IDF,
-phase encoding and $C=1$ LR on its fit rows. Fit an unpenalized two-parameter
-sigmoid to these OOF margins/labels, either pooled or independently by phase.
-The calibrator never sees validation labels. At inference, transform margins
-from the original full-training base model; this is not a fold ensemble.
-OOF models see roughly 80\% of training rows, so a margin-distribution mismatch
-with the full base remains possible. Sigmoid calibration follows the standard
-probability-calibration formulation~\cite{calibration}.
+Sigmoid calibration adjusts the model's probability estimates without changing
+its text features. To learn this adjustment without validation labels, we use
+five shuffled StratifiedGroupKFold folds (seed 5785), keeping each trial's rows
+together and approximately balancing phase/outcome groups. Each fold refits
+TF-IDF, phase encoding, and $C=1$ logistic regression on its training portion,
+then scores the held-out portion. Every training row therefore receives one
+out-of-fold decision score from a model that did not train on it.
+
+We fit an unpenalized two-parameter sigmoid to these scores and their true
+outcomes, comparing one pooled calibrator with separate calibrators per phase.
+For final predictions, the sigmoid adjusts scores from the model fitted on all
+training data; we do not average the fold models. Since each fold model sees
+roughly 80\% of the training rows, its score distribution may differ from that
+of the full model, limiting how well the adjustment transfers. We use the
+standard sigmoid calibration formulation~\cite{calibration}.
 
 \subsection{Reason-based outcome error analysis}
-For outcome failures only ($y=0$), join Part 2 trial\_id to Part 1 ID. Use visible
-train/validation reasons first. Otherwise use the final hybrid's saved masked-train
-pseudo-labels or test predictions. Absent Part 1 records form a distinct
-no-record group; masked/prediction-unavailable rows are not negative reasons.
-A multi-label trial contributes to every positive reason, once within each phase.
-For each phase/group compute count, false-success count/fraction and mean success
-probability, retaining truth/prediction provenance. Compare the same group
-membership before/after calibration. Empty groups have undefined rates.
+To examine where the outcome model predicts success incorrectly, we take failed
+trials ($y=0$) and match Part 2 trial\_id to Part 1 ID. We use observed reasons
+where available; otherwise, we use the final hybrid's recovered training labels
+or test predictions. Trials without a Part 1 record form a separate no-record
+group. Missing or unavailable reasons are not treated as negative labels.
+
+Within each phase and reason group, we report the number of failed trials, the
+number and fraction incorrectly predicted successful, and the mean predicted
+success probability. We distinguish observed from predicted reasons and keep
+group membership fixed when comparing results before and after calibration.
+A trial with several reasons contributes to each relevant group once per phase;
+rates for empty groups are undefined.
 
 \section{Results}
 \subsection{Part 1}
@@ -119,16 +176,21 @@ membership before/after calibration. Empty groups have undefined rates.
 \caption{Initial Part 1 validation F1 by reason and method.}
 \label{tab:p1}
 \end{table}
-The initial cluster methods underperform supervised controls
-(Table~\ref{tab:p1}). Added year/text features do not improve initial augmented
-models (Table~\ref{tab:p1features}); this does not establish that all text or chemistry features are unhelpful. Funding's maximum smoothed cluster score is 0.2051, below 0.3; lowering
-its threshold adds 112 pseudo-positives but drops sample F1 from 0.8547 to
-0.8419 through false positives because an entire mixed cluster is promoted. The hybrid instead recovers 16 Funding positives
-and identifies 2/4 Funding validation positives without false positives. It wins
-sample F1 0.88675; K-NN-only recovery has higher macro F1 0.78730. The recorded
-hybrid public Kaggle F1 is 0.87927~\cite{artifacts}; it is a leaderboard score,
-not a fully labeled test evaluation. No fitted Part 1 model file is saved, but
-recovered labels, validation/test predictions and source are available.
+The initial clustering methods perform worse than models trained only on
+observed labels (Table~\ref{tab:p1}). Adding year and text does not improve these
+methods (Table~\ref{tab:p1features}), although this does not rule out other text
+or chemistry representations. Funding illustrates a weakness of cluster-based
+recovery: its highest smoothed score is 0.2051, below the 0.3 cutoff. Lowering
+the cutoff assigns Funding to 112 masked trials in a mixed cluster, adding
+false positives and reducing sample F1 from 0.8547 to 0.8419.
+
+The hybrid recovers 16 Funding labels and correctly identifies 2/4 Funding
+validation cases without false positives. It achieves the best sample F1 of
+0.88675, while K-NN-only recovery has the higher macro F1 of 0.78730
+(Table~\ref{tab:p1knn}). The hybrid's recorded public Kaggle F1 is
+0.87927~\cite{artifacts}, measured on the leaderboard subset rather than the
+full test set. The source, recovered labels, and validation/test predictions
+are available, but no fitted Part 1 model file was saved.
 
 \begin{table}[t]
 \centering\small
@@ -145,25 +207,64 @@ recovered labels, validation/test predictions and source are available.
 
 \begin{figure}[t]
 \centering\includegraphics[width=\linewidth]{part1_pca_clusters.pdf}
-\caption{Existing training-only PCA diagnostic for Part 1; the first two PCs
-retain only 24.2\% of embedding variance. Source: final Part 1 notebook.}
+\caption{Training-only PCA visualization for Part 1. The first two components
+retain 24.2\% of embedding variance. Source: final Part 1 notebook.}
 \label{fig:pca}
 \end{figure}
 
+\subsection{Supplementary Part 1 experiments}
+A separate approach used RBF kernel PCA to transform the embeddings before
+K-Means clustering (50 components, $\gamma=1/75$). Both steps used all 1,171
+training trials, including 1,014 masked trials, but only the 157 observed labels determined cluster reason
+frequencies. Reasons with a cluster frequency of at least 50\% were assigned
+to masked trials; trials with no qualifying reason remained unresolved. Five
+logistic regressions then used the original standardized 150 embeddings.
+Among 2--30 clusters, the 21-cluster model reached validation sample/macro F1
+of 0.8880/0.7272, with a reported public score of about 0.82.
+
+To add local evidence, we equally blended smoothed cluster scores with votes
+from three observed-label neighbors for Safety, Funding, and Other. We recovered
+these labels at a 0.30 cutoff and gave them training weight 0.25, preserving
+observed labels. Efficacy and Recruitment still used cluster-only recovery;
+with 14 clusters, 520 masked rows remained unresolved for each reason. With
+21 clusters, the selective blend reached validation sample/macro F1 of
+0.8932/0.7752 and reported public F1 of 0.84508. With 14 clusters, stronger
+Safety regularization raised validation F1 to 0.9231/0.8291, but public F1
+was only about 0.84 (rounded).
+
+Assigning the highest-scoring cluster reason to the 520 unresolved rows gave
+every row a Recruitment label and reduced Efficacy validation F1 from 0.9333
+to 0.1333. A three-neighbor fallback was less harmful, but still reduced Efficacy
+and Recruitment F1 to 0.7742 and 0.9091. To isolate the effect of kernel PCA,
+we changed only the clustering representation in the selected hybrid. Validation
+sample/macro F1 fell from 0.8868/0.7792 to 0.8739/0.7739; none of the tested
+20--150 components improved on the original embeddings. The selected all-reason
+hybrid had the stronger recorded public F1 of 0.87927.
+
+Kernel PCA may discard useful distinctions between reasons, and estimated labels
+may introduce errors. Neither explanation is established by these results.
+Repeated model selection on 78 validation trials and differences in trial years
+may also contribute to the validation/public gap. The supplementary notebooks
+document these experiments.
+
 \subsection{Part 2 probability and phase metrics}
-The phase prior has validation loss 0.67199. The best criteria model reaches
-0.57375, versus 0.60076 for the best disease/drug/ICD-only setting and 0.58635
-for all text. Larger $C$ reduces training loss but worsens validation loss;
-the winner's training loss is 0.46903. Adding year does not beat it.
-Pooled calibration improves overall loss by only 0.00154 and wins this targeted
-comparison (Table~\ref{tab:overall}). Phase-specific calibration improves Phase III
-more but worsens Phase I and overall loss relative to pooled calibration
-(Table~\ref{tab:phases}). Positive sigmoid slopes preserve within-phase rankings,
-so ROC-AUC/AP remain unchanged; the fixed-threshold F1 can move.
+Eligibility criteria provide the strongest text representation: validation log
+loss is 0.57375, compared with 0.60076 for diseases/drugs/ICD codes, 0.58635
+for all text, and 0.67199 for the phase-success-rate baseline. Adding year does
+not improve on criteria alone. Larger $C$ lowers training loss but worsens
+validation loss, suggesting overfitting; the selected model's training loss is
+0.46903.
+
+Pooled sigmoid calibration reduces overall loss by 0.00154
+(Table~\ref{tab:overall}). Separate phase calibrators improve Phase III more,
+but worsen Phase I and overall loss compared with pooled calibration
+(Table~\ref{tab:phases}). The fitted sigmoids have positive slopes, so they
+preserve the ordering of predictions within each phase. ROC-AUC and AP therefore
+stay unchanged, although F1 can change when probabilities cross the 0.5 cutoff.
 \begin{table}[t]
 \centering\small\input{tables/overall}
-\caption{Part 2 validation. Raw: original model; Pool/Phase: pooled or phase-specific
-sigmoid. Phase mean weights all phases equally.}
+\caption{Part 2 validation. Raw: uncalibrated model; Pool/Phase: pooled or
+phase-specific sigmoid calibration. Phase mean weights phases equally.}
 \label{tab:overall}
 \end{table}
 \begin{table}[t]
@@ -172,67 +273,84 @@ sigmoid. Phase mean weights all phases equally.}
 \label{tab:phases}
 \end{table}
 
-Phase III is not broadly overconfident: raw mean success probability is 66.05\%
-versus 66.12\% observed. Among 79 predictions at least 0.8, mean probability is
-85.80\% versus 92.41\% observed success, indicating underconfidence there.
-The 0.4--0.5 bin overpredicts (45.21\% versus 26.47\%, $n=34$), so calibration
-is mixed (Figure~\ref{fig:reliability}). Pooled Brier improves from 0.19547 to
-0.19493 overall and 0.18089 to 0.18019 in Phase III. No leaderboard score is recorded for the selected calibrated model: \todo{add a verified score and submission identity if available}.
+Phase III shows why one adjustment may not help every probability range
+(Figure~\ref{fig:reliability}). Before calibration, mean predicted success is
+66.05\%, close to the observed 66.12\%. Yet the 79 predictions of at least 0.8
+average 85.80\% against 92.41\% observed success, understating success in that
+group. The 0.4--0.5 range instead overstates it: 45.21\% predicted versus
+26.47\% observed ($n=34$).
+
+Pooled calibration improves the Brier score, the mean squared probability error,
+from 0.19547 to 0.19493 overall and from 0.18089 to 0.18019 in Phase III.
+The selected calibrated model achieves Kaggle log loss of 0.59854, compared
+with validation loss of 0.57221 when rows are weighted equally and 0.56624
+when phases are weighted equally.
 \begin{figure}[t]
 \centering\includegraphics[width=.95\linewidth]{phase3_reliability.pdf}
-\caption{Phase III reliability from fixed ten-bin validation summaries. Sparse
-bins are noisy; the diagonal denotes perfect calibration. Source: build\_tables.py.}
+\caption{Phase III predicted versus observed success in ten validation bins.
+Small bins are uncertain; the diagonal indicates agreement. Source: build\_tables.py.}
 \label{fig:reliability}
 \end{figure}
 
 \subsection{Reason coverage and errors}
-Hybrid pseudo-labels are available for 131 phase rows (113 unique trials)
-whose reasons were masked; these labels remain estimates. Among 452 unsuccessful phase rows
-(398 trials), 27 use true reasons, 171 predicted reasons and 254 have no Part 1
-record. Reason estimates are available for all matched records.
+The hybrid supplies estimated reasons for 131 phase rows (113 unique trials)
+whose reasons were masked. Among the 452 failed phase rows (398 trials), 27
+have observed reasons, 171 have predicted reasons, and 254 have no Part 1
+record. Every matched record has reasons available, but most are estimates.
 \begin{table}[t]
 \centering\small\setlength{\tabcolsep}{3pt}\input{tables/reason_errors}
-\caption{Unsuccessful-trial groups. T/P: true/predicted reason counts;
-Raw/Pool: false-success fractions before/after pooled calibration. No record
-counts are absent records, not T/P. Groups overlap; -- means undefined.}
+\caption{Failed-trial groups. T/P: observed/predicted reason counts;
+Raw/Pool: fractions incorrectly predicted successful before/after pooled
+calibration. No record means no Part 1 match. Groups overlap; -- means undefined.}
 \label{tab:reasons}
 \end{table}
-Phase II Recruitment improves from 18/93 false successes to 15/93, and Phase III
-no record from 53/82 to 52/82. Phase III Efficacy stays 7/8, all with predicted
-reasons; Phase I Efficacy stays 3/4. These small reason groups do not support
-strong rankings or causal explanations. The complete audit also retains mean
-predicted probabilities and the phase-specific calibration comparison.
+Calibration reduces incorrect success predictions from 18/93 to 15/93 among
+Phase II Recruitment failures, and from 53/82 to 52/82 in the Phase III no-record
+group. However, it still predicts success for 7/8 Phase III Efficacy failures
+and 3/4 Phase I Efficacy failures. All Phase III Efficacy reasons are predicted,
+and these small groups cannot establish which reasons are hardest to model or
+why errors occur. The complete audit also records mean predicted probabilities
+and results from phase-specific calibration.
 
 \section{Discussion}
 \paragraph{Complementary but separate tasks.}
-Coarse cluster averages can suppress rare reasons or promote entire mixed
-clusters. Local neighbors provide more specific evidence; their equal blend
-with the unsupervised component helped sample F1 here. Quarter-weight pseudo-labels
-limit but do not remove labeling errors. PCA cannot establish high-dimensional
-separation, and extra sparse text/drug knowledge may add noise with only 157
-trusted labels. The final hybrid's 99-setting selection and only four Funding
-validation positives limit certainty.
+Cluster averages can hide rare reasons, while lower cutoffs may assign a reason
+to an entire mixed cluster. K-NN provides more local evidence; blending it with
+K-Means improved sample F1 here. Giving recovered labels weight 0.25 limits their
+influence but does not correct wrong labels. With only 157 observed labels,
+extra text/drug features may add noise, and a PCA plot cannot establish separation
+in the full embedding space. Repeated model selection and only four Funding
+validation positives make small improvements uncertain.
 
-Outcome calibration changes probabilities rather than vocabulary or rankings.
-Its small loss gain is not evidence of statistical significance. A high
-false-success fraction among failures alone does not establish overconfidence;
-calibration must consider all validation outcomes. The reason audit exposes
-persistent subgroup errors despite improved aggregate loss. Coverage is complete
-for recorded Part 1 trials, but most matched reason labels are estimates;
-misclassification and overlapping groups can distort comparisons. No-record
-trials may include completed failures, not merely trials with missing explanations.
+For Part 2, sigmoid calibration adjusts confidence while preserving rankings
+within each phase. The small loss improvement does not establish statistical
+significance, and persistent reason-group errors show that better overall
+probabilities do not guarantee fewer mistakes everywhere. Nor does a high error
+rate among failed trials alone prove overconfidence: calibration compares
+predicted probabilities with outcomes across both successes and failures.
+Most matched stopping reasons are estimates, and errors in those labels or
+overlapping groups can affect the comparisons. Trials without a Part 1 record
+may have completed unsuccessfully rather than stopped early; missing records
+do not simply mean missing explanations.
 
 \paragraph{Temporal and selection limitations.}
-Observed train/validation start years end in 2013; test years are 2014--2021.
-Training has 21 missing years, validation six. Historical vocabulary, treatment
-mix and success rates may change. Random-by-trial validation does not measure
-later-year performance; the retained model has no recorded leaderboard result
-with which to quantify that gap. Reusing validation for 37 outcome settings and
-two calibrators creates selection optimism. Seven training/validation eligibility
-texts match exactly, despite disjoint IDs, which may also make validation easier.
-Combined-phase rows are correlated, and per-phase sample sizes differ. We report
-row and phase-macro losses distinctly. A temporal holdout and repeated-seed checks
-are future work, not completed experiments.
+Part 2 training and validation trials with known start years begin no later than
+2013, while test trials begin in 2014--2021; 21 training rows and six validation
+rows have missing years. Changes in vocabulary, treatments, and success rates
+may reduce performance on later trials. Because validation is split randomly
+by trial, it does not directly test this transfer to later years. Kaggle log
+loss is 0.02633 above row-weighted validation loss and 0.03230 above the
+equal-phase mean. Differences in trial years and repeated validation-based
+model selection could contribute, but the leaderboard score cannot show how
+much each explains.
+
+Repeatedly choosing models and calibrators on the same validation set may make
+its scores optimistic. Seven eligibility texts also match exactly across
+training and validation despite different trial IDs, which may make validation
+easier. Rows from different phases of one trial are related, and phase sizes
+differ, so we distinguish row-weighted from equal-phase loss. A later-year
+holdout and checks across random seeds would strengthen the evaluation; neither
+is part of the reported experiments.
 
 \begin{thebibliography}{9}
 \bibitem{assignment} Cornell CS5785 / ORIE5750 / ECE5414 course staff.
