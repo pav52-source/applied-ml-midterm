@@ -1,13 +1,12 @@
 """Report tables and calibration plot from measured artifacts; no training."""
 from pathlib import Path
-import shutil
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 ROOT=Path(__file__).resolve().parents[1]
-REPORTS=ROOT/'reports'
+REPORTS=ROOT/'writeup'
 
 
 def table(path,columns,rows):
@@ -22,16 +21,6 @@ def table(path,columns,rows):
 def main():
     (REPORTS/'tables').mkdir(parents=True,exist_ok=True)
     (REPORTS/'figures').mkdir(exist_ok=True)
-    initial=pd.read_csv(ROOT/'part1-results/experiments.csv')
-    rows=[['Part 1 method','Sample F1','Macro F1']]
-    for method,title in [('starter','Starter LR'),('supervised','Supervised control'),('kmeans','K-Means + LR'),('gmm','GMM + LR')]:
-        best=initial.loc[initial.method.eq(method)].sort_values(['sample_f1','macro_f1'],ascending=False,kind='stable').iloc[0]
-        rows.append([title,f'{best.sample_f1:.4f}',f'{best.macro_f1:.4f}'])
-    local=pd.read_csv(ROOT/'part1-results/knn-experiment/results.csv')
-    for method,title in [('direct_knn','Direct K-NN'),('knn_recovery','K-NN + LR'),('kmeans_knn_hybrid','Hybrid + LR')]:
-        best=local.loc[local.method.eq(method)].iloc[0]
-        rows.append([title,f'{best.sample_f1:.4f}',f'{best.macro_f1:.4f}'])
-    table(REPORTS/'tables/part1.tex','lrr',rows)
     metrics=pd.read_csv(ROOT/'part2/calibration_outputs/validation_metrics.csv')
     titles={'baseline':'Raw','sigmoid_pooled':'Pool','sigmoid_by_phase':'Phase'}
     rows=[['Calibration','Row loss','Phase mean','Brier']]
@@ -66,10 +55,8 @@ def main():
     ax.set(xlabel='Mean predicted success',ylabel='Observed success fraction',xlim=(0,1),ylim=(0,1),title='Phase III validation reliability')
     ax.legend(fontsize=8);fig.tight_layout()
     fig.savefig(REPORTS/'figures/phase3_reliability.pdf')
-    fig.savefig(REPORTS/'figures/phase3_reliability.png',dpi=150)
     plt.close(fig)
-    shutil.copy2(ROOT/'integration/outputs/integrated_reason_errors.pdf',REPORTS/'figures/integrated_reason_errors.pdf')
-    print('Generated four measured tables and report figures; no models fitted.')
+    print('Generated three measured tables and the reliability figure; no models fitted.')
 
 
 if __name__=='__main__':main()

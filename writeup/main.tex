@@ -1,5 +1,4 @@
-% Compile with make report-pdf. The technical report is complete; fill team metadata.
-% Maximum five pages of main text including tables/figures; references excluded.
+% Draft: replace author placeholders before submission. No invented team metadata.
 \documentclass[10pt,twocolumn,letterpaper]{article}
 \usepackage[pagenumbers]{cvpr}
 \usepackage[T1]{fontenc}
@@ -7,288 +6,249 @@
 \usepackage[hidelinks]{hyperref}
 \graphicspath{{figures/}}
 \newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
-\title{Semi-Supervised Stopping-Reason Prediction\\and Clinical-Trial Outcome Classification}
-\author{\todo{Team member names}\\CS5785 / ORIE5750 / ECE5414 --- Midterm Project, Fall 2026}
+\title{Clinical-Trial Stopping Reasons and Outcomes:\\Semi-Supervised Prediction and Calibrated Classification}
+\author{\todo{Part 1 contributor: full name} \and \todo{Part 2 contributor: full name}\\
+CS5785 / ORIE5750 / ECE5414, Cornell University, Fall 2026}
 \begin{document}
 \maketitle
-\noindent\textbf{Team responsibilities.} \todo{Names and contributions.}
+\noindent\textbf{Responsibilities.} Part 1 contributor: reason-label preprocessing,
+semi-supervised recovery, classifier experiments and predictions. Part 2 contributor:
+outcome modeling, calibration and reason-based error analysis.
+\todo{Confirm full names, responsibilities and any additional team members.}
 
 \begin{abstract}
-We predict five clinical-trial stopping reasons with partially masked labels,
-and independently predict success for three trial phases. Initial cluster-based
-augmentation underperforms supervised controls. A K-means/K-nearest-neighbor
-hybrid recovers more useful local labels, achieving validation sample-wise F1
-0.8868 and macro F1 0.7792. For outcomes, phase-specific TF-IDF logistic regression,
-with train-only calibration in phases II/III, reduces equal-phase validation
-log loss from 0.9401 to 0.5738. F1, ROC-AUC, and average precision improve in every
-phase, but false-success errors increase in Phase III. Reason-group analysis
-exposes this trade-off and distinguishes observed from predicted reasons.
-Small groups, repeated validation selection, and temporal shift limit conclusions.
+We study stopping-reason prediction and trial-outcome classification using
+semi-supervised learning and calibrated classification. For five overlapping stopping reasons, a K-Means/3-neighbor
+hybrid followed by weighted logistic regression achieves validation sample F1
+0.88675 and macro F1 0.77923. For trial success, pooled eligibility-text TF-IDF
+logistic regression with phase encoding achieves validation log loss 0.57375;
+training-only, trial-grouped sigmoid calibration modestly improves it to 0.57221.
+Predicted reasons enable recorded-reason coverage in the outcome error analysis. Probability metrics improve modestly, while some small
+reason groups retain high false-success rates. Temporal shift, predicted-reason
+error and repeated validation selection limit generalization claims.
 \end{abstract}
 
 \section{Methods}
-\subsection{Data, splits, and leakage controls}
-We use the supplied assignment data and starter~\cite{course-project}, adapting
-HW2 regularized text classification and HW3 clustering/Naive Bayes~\cite{course-hw2,course-hw3}.
-Part 1 has 1,171 training trials: 157 labeled and 1,014 with all five labels
-masked as $-100$; validation/test contain 78/312 trials. Reasons are multi-label:
-Safety, Funding, Efficacy, Recruitment, and Other. Observed training positive
-counts are 16, 8, 17, 101, and 25. The labeled/unlabeled mean start years differ
-(2001.72/2006.42), and test trials are later, limiting the representativeness
-of labeled priors. IDs are matching keys only.
+\subsection{Data and leakage controls}
+We use only the supplied assignment data~\cite{assignment}. Part 1 has 1,171
+training trials (157 visible labels; 1,014 rows masked as $-100$), 78 validation
+trials and 312 test trials. Reasons are Safety, Funding, Efficacy, Recruitment
+and Other; several may apply. Labeled trials start earlier on average than unlabeled trials (2001.72 versus 2006.42), so observed label priors may not represent the masked population. Part 2 has 8,037/1,013/1,500 train/validation/test
+phase rows. Validation phases I/II/III have 149/501/363 rows; test has 500 each.
+Repeated combined-phase trials stay within one supplied split. IDs match records
+but are never predictive features. No deep learning or external outcome labels
+are used.
 
-Part 2 has 8,037/1,013/1,500 train/validation/test rows. Phase I/II/III training
-counts are 1,012/3,950/3,075; validation counts are 149/501/363. Each test phase
-has 500 rows. A combined-phase trial can have one row in each relevant phase,
-but no trial crosses supplied splits or repeats within a phase. Known train/validation
-start years end in 2013; supplied test years are 2014--2021. Success means meeting
-the primary endpoint, not merely avoiding early stopping. We fit separate phase
-models. Reason labels and embeddings never enter outcome inputs, training weights,
-or calibration. Learned transformations use training only, and final models are
-not refitted on validation. No deep learning is used.
+Neither outcome training nor calibration uses reason labels, embeddings,
+predictions, or their derived groups.
 
-\subsection{Part 1: Cluster-based label recovery}
-All 150 embeddings are standardized on training trials. We fit K-means and
-diagonal-covariance Gaussian mixtures (GMM) with $K\in\{5,10,20\}$ and seed 42.
-K-means uses k-means++, 10 initializations, tolerance $10^{-4}$, and at most 300
-iterations. GMM uses three k-means initializations, EM tolerance $10^{-3}$,
-covariance regularization $10^{-5}$, and at most 200 iterations. All six fits converge.
-For membership $r_{ik}$ (hard for K-means, soft for GMM), observed rows $L$,
-and observed positive prior $\pi_j$, estimate reason $j$ in cluster $k$ by
+\subsection{Part 1: recovery and classification}
+Standardize the 150 reason embeddings on all training rows. Fit K-Means with
+$K\in\{5,10,20\}$, k-means++ initialization, 10 starts, tolerance $10^{-4}$,
+300 iterations and seed 42. Compare diagonal GMMs with three starts, tolerance
+$10^{-3}$, 200 iterations and covariance regularization $10^{-5}$.
+For hard/soft membership $r_{ik}$ and observed reason prior $\pi_j$, estimate
 \begin{equation}
 q_{kj}=\frac{\sum_{i\in L}r_{ik}y_{ij}+2\pi_j}{\sum_{i\in L}r_{ik}+2}.
 \end{equation}
-Threshold $\sum_k r_{ik}q_{kj}$ at 0.3 or 0.5 to recover each hidden reason.
-If no reason crosses the threshold, assign the highest score. Preserve observed
-labels exactly. Fit five binary L2 logistic regressions (liblinear, at most
-1,000 iterations, seed 42), with $C\in\{0.1,1\}$ and pseudo-row weight 0.25 or
-1; observed rows have weight 1. Final decisions use 0.5 with the same fallback.
+Threshold the recovered scores at 0.3 or 0.5; if none crosses, assign the
+highest-scoring reason. Preserve all observed labels. Fit five L2 logistic
+regressions (liblinear, at most 1,000 iterations, seed 42) with $C\in\{0.1,1\}$
+and pseudo-row weight 0.25 or 1. Observed rows have weight 1. Final decisions
+use 0.5 with the same nonempty fallback.
 
-The initial embedding grid has 48 augmented configurations. For each clustering
-method's best recovery settings, retune $C\in\{0.1,1,10\}$ with (i) added
-standardized year and (ii) year plus unigram TF-IDF from criteria, diseases,
-drugs, ICD codes, targets, actions, and pathways (12 configurations). TF-IDF
-uses training-only vocabulary/IDF, minimum document frequency 3, at most 3,000
-features, sublinear term frequency, and L2 normalization; missing text is empty.
-Nine supervised controls use the same three feature sets and $C$ grid. Together
-with the unchanged starter, these are 70 configurations. Selection maximizes
-validation sample-wise F1, with macro F1 as tie-breaker and stable order for
-remaining ties. SMILES fingerprints are not evaluated.
+The 70-setting initial suite includes supervised controls, 48 cluster-augmented
+settings, and added-year/text ablations with $C\in\{0.1,1,10\}$. Text/drug TF-IDF
+uses minimum frequency 3, up to 3,000 unigrams and sublinear term frequency;
+all transformations fit training only. PCA is diagnostic, not clustering input.
+Four Funding-only threshold controls (0.30/0.20/0.15/0.10) hold the other reasons
+fixed. Twenty-five local-recovery controls compare direct K-NN, K-NN recovery,
+and cluster/local hybrid recovery with $K\in\{3,5,9,15\}$ and uniform/distance
+voting, plus matched supervised LR. This gives 99 evaluated configurations.
 
-\subsection{Part 1: Diagnostics and local recovery}
-Training-only PCA is diagnostic, not a new clustering input. Its first two
-components retain 24.2\% of variance (64 components retain 90\%). Cluster counts
-show eight Funding positives spread across four clusters; the maximum smoothed
-Funding score is 0.2051, below 0.3. We test Funding-only recovery thresholds
-0.30, 0.20, 0.15, and 0.10, fixing all other labels and settings.
+The selected hybrid equally averages scores from the best 10-cluster model
+and three uniform neighbors among the 157 labeled training trials. Recover
+masked labels at 0.3 with the fallback, then fit LR with $C=0.1$ and pseudo-weight
+0.25. Select by validation sample F1, then macro F1. K-Means/GMM and feature
+construction use standard scikit-learn implementations~\cite{clustering,tfidf}.
 
-Next, K-nearest neighbors uses only the 157 observed training trials as reference
-points in standardized embedding space. We test $K\in\{3,5,9,15\}$ with uniform
-or inverse-distance votes. Compare direct supervised KNN, KNN recovery followed
-by weighted logistic regression, and a hybrid averaging local KNN and K-means
-scores equally before recovery. Both recovery methods fix threshold 0.3,
-pseudo-weight 0.25, and classifier $C=0.1$. A labeled-only LR control has the same
-$C$. These add 25 configurations (8 direct, 16 augmented, 1 control), for 99
-including the four threshold follow-ups. The selected hybrid uses 10 clusters,
-three uniform neighbors, and the existing final decision rule. The unsupervised
-cluster component remains in this model; direct KNN alone would not meet that
-requirement. Initial and candidate submissions are stored separately.
+\subsection{Part 2: fixed model and controlled experiments}
+First predict each phase's training success prior. Compare 36 LR settings:
+three text sets (criteria; diseases/drugs/ICD; all four), $C=0.1/1/10$, year
+on/off, and pooled versus independent phase models. Safely parse list-valued
+text; missing text becomes empty. Each field has training-fitted unigram/bigram
+TF-IDF with minimum frequency 3, sublinear TF, L2 normalization, at most 15,000
+criteria features or 5,000 per other field. Pooled models include one-hot phase;
+per-phase models fit independent transforms. Year uses training-median imputation,
+missingness indicators and scaling. LR uses liblinear, tolerance $10^{-5}$,
+at most 2,000 iterations and seed 5785, without class weights.
 
-\subsection{Part 2: Original classifier and error audit}
-The baseline reproduces the starter: binary bag of words from criteria, diseases,
-drugs, and ICD codes (minimum document frequency 3; maximum 20,000 features),
-followed by phase-specific L2 logistic regression with $C=1$, liblinear, seed 42,
-and at most 1,500 iterations. It converges and reproduces the original scores.
-Binary decisions use probability 0.5 throughout.
+Select minimum overall validation log loss without a validation refit. The winner
+uses criteria plus phase, pooled $C=1$, no year. Overall validation loss is
+row-weighted; report equal-phase mean separately because test phases are balanced.
+F1 uses probability $\geq0.5$; ROC-AUC and average precision (AP) use success
+probabilities. AP is not trapezoidal PR area.
 
-For unsuccessful validation rows, join trial IDs to the Part 1 hybrid's reasons.
-Visible Part 1 training and validation reasons are observed; masked training reasons
-are pseudo-labels; Part 1 test reasons are predictions. Unmatched rows form a
-separate no-recorded-reason group. Of 452 unsuccessful trial-phase rows, 27 have
-observed reasons, 171 predicted reasons, and 254 no match. A row can count in
-multiple reason groups, but once per group within a phase. For every group,
-report size and the fraction incorrectly predicted successful, plus reason
-provenance. Empty groups have undefined rates, not zero.
+\subsection{Training-only probability calibration}
+Generate exactly one out-of-fold margin for every training row using five
+shuffled StratifiedGroupKFold folds, grouping by trial ID and approximately
+balancing phase/outcome strata (seed 5785). Each fold refits the same TF-IDF,
+phase encoding and $C=1$ LR on its fit rows. Fit an unpenalized two-parameter
+sigmoid to these OOF margins/labels, either pooled or independently by phase.
+The calibrator never sees validation labels. At inference, transform margins
+from the original full-training base model; this is not a fold ensemble.
+OOF models see roughly 80\% of training rows, so a margin-distribution mismatch
+with the full base remains possible. Sigmoid calibration follows the standard
+probability-calibration formulation~\cite{calibration}.
 
-\subsection{Part 2: Modification and model selection}
-Baseline errors include false success for 6/8 Phase III Efficacy-group failures
-and high probability log loss. We therefore test alternative representations,
-class balancing, regularization, and train-only probability calibration.
-Natural text is lowercased; formatting is removed while retaining numbers,
-negations, and in-word hyphens. No stemming or stop-word removal is used.
-Three representations are tested: (i) criteria TF-IDF unigrams/bigrams
-(minimum document frequency 3, maximum 10,000 features, sublinear TF);
-(ii) separate L2-normalized criteria, disease/drug context (maximum 3,000
-unigrams), and intact ICD-token blocks (maximum 1,500 tokens);
-(iii) these blocks plus target/action/pathway tokens (maximum 2,000) and
-training-median-imputed, standardized year with missingness indicators.
-All blocks use minimum document frequency 3. ICD E11.9 becomes one
-\texttt{icd\_e119} token; structured drug identifiers get field prefixes.
-Missing text is empty; missing drug knowledge receives a dedicated token.
-
-For each phase, test LR $C\in\{0.1,1,10\}$ with no class weighting or
-training-label-based balanced weights (18 settings). Test Multinomial Naive
-Bayes $\alpha\in\{0.1,1,10\}$ on the two nonnegative TF-IDF representations
-(6 settings). Finally, sigmoid-calibrate the starter and best uncalibrated
-TF-IDF LR candidate, using three shuffled stratified training folds (seed 42).
-Each full preprocessing/model pipeline is refitted inside each fold, and calibrated
-fold predictions are averaged. Each trial appears once within its phase, so
-folds do not split a phase's trial across training/calibration. Validation is
-never used to fit preprocessing, models, or calibrators.
-
-Including the baseline gives 27 configurations per phase (81 total). Select the
-smallest validation log loss per phase, retaining the baseline if none improves;
-stable evaluation order breaks ties. This aligns with the competition's
-probability score and equal-sized test phases. Report F1 from fixed binary
-predictions and ROC-AUC/AP from success probabilities. Recompute all reason-group
-errors with unchanged group membership. Reasons do not set individual model weights.
+\subsection{Reason-based outcome error analysis}
+For outcome failures only ($y=0$), join Part 2 trial\_id to Part 1 ID. Use visible
+train/validation reasons first. Otherwise use the final hybrid's saved masked-train
+pseudo-labels or test predictions. Absent Part 1 records form a distinct
+no-record group; masked/prediction-unavailable rows are not negative reasons.
+A multi-label trial contributes to every positive reason, once within each phase.
+For each phase/group compute count, false-success count/fraction and mean success
+probability, retaining truth/prediction provenance. Compare the same group
+membership before/after calibration. Empty groups have undefined rates.
 
 \section{Results}
 \subsection{Part 1}
-Table~\ref{tab:initial} shows selected initial settings: K-means uses 10 clusters,
-threshold 0.3, pseudo-weight 0.25, $C=0.1$, and embeddings alone; it converges in
-19 iterations. GMM uses 20 components and the same remaining settings, converging
-in 51 iterations. Both underperform the starter. The strongest supervised control
-uses $C=1$; its improvement over the starter comes from the highest-score fallback.
-\begin{table}[ht]
-\centering
+\begin{table}[t]
+\centering\small
 \input{part1_results}
-\caption{Initial Part 1 validation F1. Sup. denotes the best supervised control.}
-\label{tab:initial}
+\caption{Initial Part 1 validation F1 by reason and method.}
+\label{tab:p1}
 \end{table}
+The initial cluster methods underperform supervised controls
+(Table~\ref{tab:p1}). Added year/text features do not improve initial augmented
+models (Table~\ref{tab:p1features}); this does not establish that all text or chemistry features are unhelpful. Funding's maximum smoothed cluster score is 0.2051, below 0.3; lowering
+its threshold adds 112 pseudo-positives but drops sample F1 from 0.8547 to
+0.8419 through false positives because an entire mixed cluster is promoted. The hybrid instead recovers 16 Funding positives
+and identifies 2/4 Funding validation positives without false positives. It wins
+sample F1 0.88675; K-NN-only recovery has higher macro F1 0.78730. The recorded
+hybrid public Kaggle F1 is 0.87927~\cite{artifacts}; it is a leaderboard score,
+not a fully labeled test evaluation. No fitted Part 1 model file is saved, but
+recovered labels, validation/test predictions and source are available.
 
-Adding year/text does not improve the initial augmented models
-(Table~\ref{tab:features}). The K-means recovery gives 98 Safety, 0 Funding,
-128 Efficacy, 749 Recruitment, and 137 Other positives among 1,014 hidden rows.
-Lower Funding thresholds all add the same 112 pseudo-positives. Validation Funding
-true positives remain 1/4, but false positives rise from 0 to 3; Funding F1 falls
-from 0.40 to 0.25 and sample F1 from 0.8547 to 0.8419. We reject that change.
-\begin{table}[ht]
-\centering
+\begin{table}[t]
+\centering\small
 \input{part1_feature_results}
-\caption{Initial best sample F1 per feature setting. E: embeddings; Y: year;
-T: text/drug TF-IDF. Recovery settings are fixed within each method's ablations.}
-\label{tab:features}
+\caption{Sample F1 by feature set: embeddings (E), year (Y), and text (T).}
+\label{tab:p1features}
 \end{table}
-
-Local recovery improves results (Table~\ref{tab:knn}). Both best augmented methods
-use three uniform neighbors; direct KNN selects three distance-weighted neighbors.
-The matched supervised LR control at $C=0.1$ scores sample/macro F1 0.8534/0.6463.
-The hybrid recovers 16 Funding pseudo-positives versus 45 for KNN-only recovery.
-Both find 2/4 Funding validation positives with no false positives (precision 1,
-recall 0.5). The hybrid has highest sample F1, whereas KNN-only recovery has higher
-macro F1. The submitted hybrid received Part 1 public Kaggle score 0.87927;
-this is a leaderboard-subset score, not a full-test evaluation.
-\begin{table}[ht]
-\centering
+\begin{table}[t]
+\centering\small
 \input{part1_knn_results}
-\caption{Local-recovery validation F1. KNN+LR: KNN pseudo-labels and weighted LR;
-Hybrid: equal cluster/local score blend and weighted LR.}
-\label{tab:knn}
+\caption{Local recovery validation F1 by reason and method.}
+\label{tab:p1knn}
 \end{table}
 
-\subsection{Part 2 overall performance}
-Phase I selects criteria TF-IDF LR $C=10$ without calibration. Phase II selects
-criteria TF-IDF LR $C=1$ with sigmoid calibration; Phase III selects separated
-clinical TF-IDF LR $C=1$ with calibration. None uses balanced weights or the
-extra knowledge/year block. Table~\ref{tab:outcomes} reports all required metrics
-and log loss. Equal-phase mean validation loss falls from 0.9401 to 0.5738.
-F1, ROC-AUC, and AP improve in each phase. Calibration modestly improves raw
-TF-IDF loss in II (0.6157 to 0.6127) and III (0.5517 to 0.5485), but worsens
-Phase I's best raw LR loss (0.5603 to 0.5766), so it is not selected there.
-Best Naive Bayes losses are 0.6141/0.6361/0.6892 for I/II/III, all worse than
-selected LR. The 1,500-row probability submission was uploaded as Kaggle
-submission 58039392 and received public log loss 0.61046. This exceeds the
-equal-phase validation loss 0.57383 by 0.03663. The public score evaluates a
-leaderboard subset; full-test and per-phase test scores are unavailable.
-\begin{table}[ht]
-\centering
-\input{part2_metrics}
-\caption{Outcome validation metrics at threshold 0.5. ROC: ROC-AUC; AP: average
-precision; Loss: probability log loss. Selection minimizes Loss per phase.}
-\label{tab:outcomes}
+\begin{figure}[t]
+\centering\includegraphics[width=\linewidth]{part1_pca_clusters.pdf}
+\caption{Existing training-only PCA diagnostic for Part 1; the first two PCs
+retain only 24.2\% of embedding variance. Source: final Part 1 notebook.}
+\label{fig:pca}
+\end{figure}
+
+\subsection{Part 2 probability and phase metrics}
+The phase prior has validation loss 0.67199. The best criteria model reaches
+0.57375, versus 0.60076 for the best disease/drug/ICD-only setting and 0.58635
+for all text. Larger $C$ reduces training loss but worsens validation loss;
+the winner's training loss is 0.46903. Adding year does not beat it.
+Pooled calibration improves overall loss by only 0.00154 and wins this targeted
+comparison (Table~\ref{tab:overall}). Phase-specific calibration improves Phase III
+more but worsens Phase I and overall loss relative to pooled calibration
+(Table~\ref{tab:phases}). Positive sigmoid slopes preserve within-phase rankings,
+so ROC-AUC/AP remain unchanged; the fixed-threshold F1 can move.
+\begin{table}[t]
+\centering\small\input{tables/overall}
+\caption{Part 2 validation. Raw: original model; Pool/Phase: pooled or phase-specific
+sigmoid. Phase mean weights all phases equally.}
+\label{tab:overall}
+\end{table}
+\begin{table}[t]
+\centering\small\setlength{\tabcolsep}{3pt}\input{tables/phase_metrics}
+\caption{Validation metrics, F1 at 0.5. ROC denotes ROC-AUC.}
+\label{tab:phases}
 \end{table}
 
-\subsection{Part 2 errors by reason}
-Table~\ref{tab:errors} includes all six groups and three phases. Phase I Funding
-false-success fraction falls from 2/3 to 1/3, Recruitment from 10/24 to 7/24,
-and Other from 2/3 to 0/3. Phase II Recruitment falls from 33/93 to 16/93, while
-Other increases from 4/15 to 5/15. Phase III Efficacy worsens from 6/8 to 7/8;
-Recruitment from 15/25 to 16/25; the unmatched group from 37/82 to 48/82.
-All Phase III Efficacy reason labels are predicted. Phase III Funding has no
-examples and its rate is N/A. Observed and predicted counts make uncertainty
-in inferred categories explicit.
-\begin{table}[ht]
-\centering
-\setlength{\tabcolsep}{4pt}
-\input{part2_reason_errors}
-\caption{False-success rates among outcome failures. Obs./Pred.: observed/predicted
-reason counts; Base/Sel.: original/selected rates. No record means unmatched;
-its n is the unmatched count. Categories overlap. N/A indicates no trials.}
-\label{tab:errors}
+Phase III is not broadly overconfident: raw mean success probability is 66.05\%
+versus 66.12\% observed. Among 79 predictions at least 0.8, mean probability is
+85.80\% versus 92.41\% observed success, indicating underconfidence there.
+The 0.4--0.5 bin overpredicts (45.21\% versus 26.47\%, $n=34$), so calibration
+is mixed (Figure~\ref{fig:reliability}). Pooled Brier improves from 0.19547 to
+0.19493 overall and 0.18089 to 0.18019 in Phase III. No leaderboard score is recorded for the selected calibrated model: \todo{add a verified score and submission identity if available}.
+\begin{figure}[t]
+\centering\includegraphics[width=.95\linewidth]{phase3_reliability.pdf}
+\caption{Phase III reliability from fixed ten-bin validation summaries. Sparse
+bins are noisy; the diagonal denotes perfect calibration. Source: build\_tables.py.}
+\label{fig:reliability}
+\end{figure}
+
+\subsection{Reason coverage and errors}
+Hybrid pseudo-labels are available for 131 phase rows (113 unique trials)
+whose reasons were masked; these labels remain estimates. Among 452 unsuccessful phase rows
+(398 trials), 27 use true reasons, 171 predicted reasons and 254 have no Part 1
+record. Reason estimates are available for all matched records.
+\begin{table}[t]
+\centering\small\setlength{\tabcolsep}{3pt}\input{tables/reason_errors}
+\caption{Unsuccessful-trial groups. T/P: true/predicted reason counts;
+Raw/Pool: false-success fractions before/after pooled calibration. No record
+counts are absent records, not T/P. Groups overlap; -- means undefined.}
+\label{tab:reasons}
 \end{table}
+Phase II Recruitment improves from 18/93 false successes to 15/93, and Phase III
+no record from 53/82 to 52/82. Phase III Efficacy stays 7/8, all with predicted
+reasons; Phase I Efficacy stays 3/4. These small reason groups do not support
+strong rankings or causal explanations. The complete audit also retains mean
+predicted probabilities and the phase-specific calibration comparison.
 
 \section{Discussion}
-\paragraph{Part 1.}
-Clusters need not correspond one-to-one to reasons; local or multi-label variation
-can be lost by cluster-wide thresholding. Funding disappears in the initial
-recovery despite eight observed positives. Its largest score (0.2051) is below
-0.3, and lowering the threshold promotes an entire mixed cluster. Local neighbors
-retain more specific evidence; combining them with cluster scores limits wholesale
-promotion in this experiment. Small groups remain unreliable (two clusters have
-only three/four observed trials). A 2D PCA plot cannot establish separation in the
-original 150-dimensional space. Pseudo-weight 0.25 limits, but does not eliminate,
-the influence of incorrect labels. Extra sparse features may add noise with only
-157 trusted labels; missing drug matches also limit information. These ablations
-do not establish that all chemistry or text features are unhelpful. Only four
-Funding validation positives and repeated selection across 99 configurations
-make small gains uncertain; no repeated-seed or independent holdout confirmation
-is claimed.
+\paragraph{Complementary but separate tasks.}
+Coarse cluster averages can suppress rare reasons or promote entire mixed
+clusters. Local neighbors provide more specific evidence; their equal blend
+with the unsupervised component helped sample F1 here. Quarter-weight pseudo-labels
+limit but do not remove labeling errors. PCA cannot establish high-dimensional
+separation, and extra sparse text/drug knowledge may add noise with only 157
+trusted labels. The final hybrid's 99-setting selection and only four Funding
+validation positives limit certainty.
 
-\paragraph{Part 2.}
-Probability quality and threshold errors measure different behavior. TF-IDF and
-phase-dependent calibration reduce overconfident mistakes: the fraction of all
-validation rows assigned at least 0.9 probability to the wrong class falls from
-13.4\%/16.4\%/12.9\% to 1.3\%/0\%/0.6\% for I/II/III. However, Phase III's
-false-success rate among failures rises from 49.6\% to 59.3\% despite better
-F1 and probability metrics. A best-loss balanced LR alternative reduces that
-rate to 40.7\%, but has loss 0.5734 and F1 0.7580, versus the selected model's
-0.5485 and 0.7915. We retain the log-loss-selected model for the stated competition
-objective and report its subgroup regressions rather than claim uniform improvement.
+Outcome calibration changes probabilities rather than vocabulary or rankings.
+Its small loss gain is not evidence of statistical significance. A high
+false-success fraction among failures alone does not establish overconfidence;
+calibration must consider all validation outcomes. The reason audit exposes
+persistent subgroup errors despite improved aggregate loss. Coverage is complete
+for recorded Part 1 trials, but most matched reason labels are estimates;
+misclassification and overlapping groups can distort comparisons. No-record
+trials may include completed failures, not merely trials with missing explanations.
 
-Field-separated clinical features help the selected Phase III model; criteria-only
-features suffice in I/II. The combined knowledge/year block is never selected;
-this joint ablation cannot isolate the individual value of year versus drug
-knowledge. Missing matches, sparse features, and historical associations may
-limit benefit. Small reason groups cannot support strong causal conclusions,
-and most matched reasons are estimates. Category errors and overlapping labels
-can distort group comparisons; unmatched trials are a distinct population, not
-necessarily trials with no failure explanation. Outcome-label noise may remain.
-
-The supplied train/validation splits have similar historical periods, whereas
-test trials are later. Shift in treatment, study design, vocabulary, and success
-rates may reduce test performance; calibration learned on historical trials may
-not transfer. The observed validation-to-public gap is about 0.0366 log-loss
-units, but the comparison uses different cohorts and an equal-phase validation
-average versus a public-subset aggregate. Temporal shift is a plausible contributor,
-not an established cause of the gap; sample composition and selection optimism
-may also contribute. Hidden outcomes prevent full-test or per-phase test
-analysis. Reusing validation for 81 candidate scores
-also creates selection optimism. Training-only temporal evaluation and stability
-across seeds are possible follow-ups, not completed experiments. Source notebooks,
-all measured tables, prediction/provenance audits, and both submission files are
-retained for reproducibility.
+\paragraph{Temporal and selection limitations.}
+Observed train/validation start years end in 2013; test years are 2014--2021.
+Training has 21 missing years, validation six. Historical vocabulary, treatment
+mix and success rates may change. Random-by-trial validation does not measure
+later-year performance; the retained model has no recorded leaderboard result
+with which to quantify that gap. Reusing validation for 37 outcome settings and
+two calibrators creates selection optimism. Seven training/validation eligibility
+texts match exactly, despite disjoint IDs, which may also make validation easier.
+Combined-phase rows are correlated, and per-phase sample sizes differ. We report
+row and phase-macro losses distinctly. A temporal holdout and repeated-seed checks
+are future work, not completed experiments.
 
 \begin{thebibliography}{9}
-\bibitem{course-project} CS5785 / ORIE5750 / ECE5414 course staff.
-\emph{Midterm Project} and \emph{CS5785 Midterm Starter Notebook}, Fall 2026.
-Implementation uses pandas, NumPy, SciPy, scikit-learn, and Matplotlib.
-\bibitem{course-hw2} Jonathan Tumalle. \emph{Homework 2: Programming Exercises},
-Fall 2026. Clinical-trial text features and regularized logistic regression.
-\bibitem{course-hw3} Jonathan Tumalle. \emph{Homework 3: Programming Exercises},
-Fall 2026. K-means, Gaussian discriminant analysis, and text classification.
-\bibitem{ai-assistance} OpenAI Codex. Assistance with implementation, execution
-checks, and report drafting, November 2026. Team members should review and adapt
-the work and follow the course policy for disclosure.
+\bibitem{assignment} Cornell CS5785 / ORIE5750 / ECE5414 course staff.
+\emph{Midterm Project}, Fall 2026. Local assignment transcription
+\texttt{Midterm\_Project.tex}; PDF unavailable in this checkout.
+\bibitem{artifacts} Team project artifacts, Fall 2026.
+\texttt{PART1\_NOTES.md}, hybrid selection/prediction files and validation tables.
+
+\bibitem{clustering} Scikit-learn developers. \emph{Clustering}, documentation.
+\url{https://scikit-learn.org/stable/modules/clustering.html}.
+\bibitem{tfidf} Scikit-learn developers. \emph{TfidfVectorizer}, API documentation.
+\url{https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html}.
+\bibitem{calibration} Scikit-learn developers. \emph{Probability calibration}, documentation.
+\url{https://scikit-learn.org/stable/modules/calibration.html}.
 \end{thebibliography}
+\noindent\textbf{AI assistance disclosure (review before submission).}
+Codex assisted with implementation, verification and drafting.
+\todo{Confirm wording against the course policy and each contributor's actual use.}
 \end{document}

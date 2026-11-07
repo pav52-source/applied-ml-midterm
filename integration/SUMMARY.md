@@ -90,8 +90,8 @@ was rerun.
 
 - Final notebooks: `deliverables/notebooks/` (four files).
 - Final notebook/environment/assembly guide: `deliverables/README.md`.
-- Unified draft: `reports/final_report.pdf` and `reports/final_report.tex`.
-- Measured tables/figure source: `reports/build_tables.py`; Part 1 PCA source is
+- Unified draft: `writeup/main.pdf` and `writeup/main.tex`.
+- Measured tables/figure source: `writeup/build_tables.py`; Part 1 PCA source is
   copied from main in the final Part 1 notebook.
 - New authoritative error analysis: `integration/outputs/analysis_report.md`.
 - All originals remain under their original paths.
@@ -101,7 +101,7 @@ From the repository root, using the available Python environment:
 ```sh
 /Users/michaelherbstman/GradSchool/CS_5785/appliedML_venv/bin/python -m integration.reconcile_reasons
 /Users/michaelherbstman/GradSchool/CS_5785/appliedML_venv/bin/python -m integration.verify
-/Users/michaelherbstman/GradSchool/CS_5785/appliedML_venv/bin/python reports/build_tables.py
+/Users/michaelherbstman/GradSchool/CS_5785/appliedML_venv/bin/python writeup/build_tables.py
 cd reports
 pdflatex -interaction=nonstopmode -halt-on-error final_report.tex
 pdflatex -interaction=nonstopmode -halt-on-error final_report.tex
