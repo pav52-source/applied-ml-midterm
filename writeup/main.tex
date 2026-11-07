@@ -240,10 +240,6 @@ ROC-AUC; AP is average precision.}
 \end{table}
 
 \subsection{Reason coverage and errors}
-The hybrid supplies estimated reasons for 131 phase rows (113 unique trials)
-whose reasons were masked. Among the 452 failed phase rows (398 trials), 27
-have observed reasons, 171 have predicted reasons, and 254 have no Part 1
-record. Every matched record has reasons available, but most are estimates.
 \begin{table}[t]
 \centering\small\setlength{\tabcolsep}{3pt}\input{tables/reason_errors}
 \caption{Selected model's validation false successes among failed trials.
@@ -251,11 +247,11 @@ T/P: observed/predicted reason counts. No record means no Part 1 match;
 groups overlap, and -- denotes an empty group.}
 \label{tab:reasons}
 \end{table}
-The model predicts success for 18/93 Phase II Recruitment failures, 50/82
-Phase III no-record failures, and all 8 Phase III Efficacy failures
-(Table~\ref{tab:reasons}). It also misses all four Phase I Efficacy failures.
-The Efficacy groups rely entirely on predicted Part 1 reasons, so these small
-counts cannot establish which stopping reasons are hardest to model.
+Despite improved overall log loss, the model still mistakes many failed trials
+for successes in several Phase III groups and in the Phase I Efficacy group
+(Table~\ref{tab:reasons}). Small groups and reliance on predicted stopping
+reasons limit how confidently we can attribute these errors to a particular
+reason.
 
 \section{Discussion}
 \paragraph{Complementary but separate tasks.}
