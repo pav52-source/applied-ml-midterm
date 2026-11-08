@@ -1,4 +1,3 @@
-# Michael's recorded Part 2 numerical environment; exact inference verification used these.
 numpy==2.5.3
 scipy==1.18.1
 pandas==3.0.6
@@ -8,5 +7,3 @@ ipykernel>=7.4,<8
 jupyterlab>=4,<5
 nbformat>=5,<6
 nbclient>=0.10,<1
-# Teammate's Part 1 recorded numpy 2.5.4 / pandas 3.1.0 / matplotlib 3.11.2.
-# Saved validation predictions are verified without refitting in this environment.
