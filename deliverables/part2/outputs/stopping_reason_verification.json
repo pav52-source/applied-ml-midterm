@@ -1,0 +1,33 @@
+{
+  "threshold": 0.5,
+  "n_group_cells_verified": 18,
+  "n_unsuccessful_rows": 452,
+  "n_unique_unsuccessful_trials": 398,
+  "protected_files_unchanged": true,
+  "protected_sha256": {
+    "outputs/cluster_count_comparison.csv": "c9d96b0fd673c0f2af0f00162be43998c66ac30fe76c871b13cfdb80b42ab4f2",
+    "outputs/experiment_results.csv": "8a53b96aaa0499629cbbd31df7eccf218354f3fa38ba1c40f93f741ddea37a17",
+    "outputs/part1_submission.csv": "8c47550864c7d162508e169436927df0bfba619581d60f898521e3bf1c2696e0",
+    "part1-data/.DS_Store": "ba04982a03f335479a87cab492c833aa110ed92eccdf0f1d4c4051d759f21910",
+    "part1-data/part1_sample_submission.csv": "a0caf0cafcae62aa37b02db9c0a7bdede245bee36959a8ea11a0184a28107921",
+    "part1-data/part1_test.csv": "8eeae3db75134c428c33acc97a79f893c504a7c9907367a6448eb9a093633b0a",
+    "part1-data/part1_train.csv": "f6019e7c0940434e671236554342c1b24983ca81f4a0ae06411a788f36c29170",
+    "part1-data/part1_val.csv": "342d748026affa043863ac9909b267249c35b0190283a491d324594431a1eec8",
+    "part1-data/pathway_catalog.csv": "561f4e23ba21f70432095cca204b9f71cf57d3c8e883a5767dc792ba27d655d2",
+    "part2/outputs/audit_summary.json": "d66c27118ebefdf0e2dce484299cc36fbcfc7b8e8996afb100302408dc935e95",
+    "part2/outputs/best_model.pkl": "0711842432446be2721bcf37622b2cbad96b267e24dd1317256fa15269b022d1",
+    "part2/outputs/best_validation_predictions.csv": "5d9cb9b7622b7247bc4467f523c56d88df68e03566161ab07e4a5beda46b58d5",
+    "part2/outputs/class_balance.csv": "1c197c05db778ac1a5fb2e51aa133c26a3d8bb9be8b271a24c31f1e1c68f42fd",
+    "part2/outputs/cross_split_overlap.csv": "579bc764f7ba07a67eccdfcd30984ea9b8f061b51613100d5778117a279be430",
+    "part2/outputs/data_audit.md": "a6441e554e5afbe055414a247e7fee0ae77871333223a4dcaf77aec0d2521101",
+    "part2/outputs/duplicates_and_years.csv": "9c6241f397fdeb27f379afdeb99976c3aed4c938c1f212ddb1d0dbd16fa58f61",
+    "part2/outputs/experiment_report.md": "6f31b42023029f9510a6a0e50a7e987e047efc7069813b19e82ec6312a4b59ef",
+    "part2/outputs/experiment_results.csv": "dbc6aaa5c7609519b8b1320e3a9de1f42a6f4a9c7c9ec531f770cbbb01d77406",
+    "part2/outputs/missing_values.csv": "b0ed7a5d395bbcd86a02f9490e1b94ce8045b13c6d6401d8b9b1d13d72f515c3",
+    "part2/outputs/part2_submission.csv": "5d196bc08ca5c4d67d467722fce1890f77d9aa4f837665a30ded1c0d4c1b9d4f",
+    "part2/outputs/run_metadata.json": "80f8a541fb0cdefdbfc8c90b072a7bdb1c0f598b2ff1bc9321c1192afaebbb91",
+    "part2/outputs/schema.csv": "6ec896abb26f3b81ca60c6130084efa483d07909bd201a3942d426c125c54fec",
+    "part2/outputs/start_year_counts.csv": "dd095b25761aaf095d366a9f9b4a7b32edbe1719072a120000bf6ed43f0c7da3",
+    "part2/outputs/validation_predictions.csv": "9618023a6bf90070c8881d8767436a0802d372eba4f980c118e43294fa32985f"
+  }
+}

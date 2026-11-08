@@ -1,0 +1,55 @@
+phase,reason_group,reason_source,n_trials,n_predicted_success,false_success_rate,mean_predicted_success_probability,n_ground_truth,n_predictions,n_no_record,n_reasons_unavailable
+I,Safety,ground_truth,1,0,0.0,0.3100504536718613,1,0,0,0
+I,Safety,prediction,1,1,1.0,0.7321486598773481,0,1,0,0
+I,Safety,no_record,0,0,,,0,0,0,0
+I,Funding,ground_truth,1,0,0.0,0.4522076887018731,1,0,0,0
+I,Funding,prediction,0,0,,,0,0,0,0
+I,Funding,no_record,0,0,,,0,0,0,0
+I,Efficacy,ground_truth,0,0,,,0,0,0,0
+I,Efficacy,prediction,0,0,,,0,0,0,0
+I,Efficacy,no_record,0,0,,,0,0,0,0
+I,Recruitment,ground_truth,2,1,0.5,0.35252761135757393,2,0,0,0
+I,Recruitment,prediction,5,1,0.2,0.3718904313550253,0,5,0,0
+I,Recruitment,no_record,0,0,,,0,0,0,0
+I,Other,ground_truth,0,0,,,0,0,0,0
+I,Other,prediction,3,2,0.6666666666666666,0.5574557146663245,0,3,0,0
+I,Other,no_record,0,0,,,0,0,0,0
+I,no recorded stopping reason,ground_truth,0,0,,,0,0,0,0
+I,no recorded stopping reason,prediction,0,0,,,0,0,0,0
+I,no recorded stopping reason,no_record,28,13,0.4642857142857143,0.4744354556381734,0,0,28,0
+II,Safety,ground_truth,1,0,0.0,0.3318646966097134,1,0,0,0
+II,Safety,prediction,4,3,0.75,0.5702359192531581,0,4,0,0
+II,Safety,no_record,0,0,,,0,0,0,0
+II,Funding,ground_truth,1,0,0.0,0.4753040381766452,1,0,0,0
+II,Funding,prediction,1,0,0.0,0.2635130361703988,0,1,0,0
+II,Funding,no_record,0,0,,,0,0,0,0
+II,Efficacy,ground_truth,0,0,,,0,0,0,0
+II,Efficacy,prediction,3,1,0.3333333333333333,0.4209429606286775,0,3,0,0
+II,Efficacy,no_record,0,0,,,0,0,0,0
+II,Recruitment,ground_truth,12,0,0.0,0.2624385163472171,12,0,0,0
+II,Recruitment,prediction,19,6,0.3157894736842105,0.39738912673009763,0,19,0,0
+II,Recruitment,no_record,0,0,,,0,0,0,0
+II,Other,ground_truth,3,0,0.0,0.4351647622742587,3,0,0,0
+II,Other,prediction,5,3,0.6,0.5584896092163942,0,5,0,0
+II,Other,no_record,0,0,,,0,0,0,0
+II,no recorded stopping reason,ground_truth,0,0,,,0,0,0,0
+II,no recorded stopping reason,prediction,0,0,,,0,0,0,0
+II,no recorded stopping reason,no_record,144,52,0.3611111111111111,0.4211186075681972,0,0,144,0
+III,Safety,ground_truth,1,0,0.0,0.4282735681574307,1,0,0,0
+III,Safety,prediction,0,0,,,0,0,0,0
+III,Safety,no_record,0,0,,,0,0,0,0
+III,Funding,ground_truth,0,0,,,0,0,0,0
+III,Funding,prediction,0,0,,,0,0,0,0
+III,Funding,no_record,0,0,,,0,0,0,0
+III,Efficacy,ground_truth,0,0,,,0,0,0,0
+III,Efficacy,prediction,1,1,1.0,0.7431685254251166,0,1,0,0
+III,Efficacy,no_record,0,0,,,0,0,0,0
+III,Recruitment,ground_truth,5,1,0.2,0.3169041281039926,5,0,0,0
+III,Recruitment,prediction,4,3,0.75,0.6221215199900196,0,4,0,0
+III,Recruitment,no_record,0,0,,,0,0,0,0
+III,Other,ground_truth,2,1,0.5,0.5591136158892359,2,0,0,0
+III,Other,prediction,2,2,1.0,0.6774560388513544,0,2,0,0
+III,Other,no_record,0,0,,,0,0,0,0
+III,no recorded stopping reason,ground_truth,0,0,,,0,0,0,0
+III,no recorded stopping reason,prediction,0,0,,,0,0,0,0
+III,no recorded stopping reason,no_record,82,53,0.6463414634146342,0.5595279770623852,0,0,82,0

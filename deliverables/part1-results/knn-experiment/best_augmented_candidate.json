@@ -1,0 +1,14 @@
+{
+  "method": "kmeans_knn_hybrid",
+  "neighbors": 3,
+  "neighbor_weighting": "uniform",
+  "sample_f1": 0.8867521367521366,
+  "macro_f1": 0.7792343604108309,
+  "configurations": 25,
+  "pseudo_threshold": 0.3,
+  "pseudo_weight": 0.25,
+  "C": 0.1,
+  "features": "embeddings",
+  "cluster_score_weight": 0.5,
+  "overwrites_original_selection": false
+}

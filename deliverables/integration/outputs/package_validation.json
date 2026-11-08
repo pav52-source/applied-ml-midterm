@@ -1,0 +1,23 @@
+{
+  "staging_directory": "/private/var/folders/mt/_hz51p2s7wgby3xr_9gh9glc0000gn/T/cs5785-integration-zbzhejqc/midterm",
+  "notebook_results": [
+    {
+      "notebook": "part1_final",
+      "returncode": 0
+    },
+    {
+      "notebook": "part2_modeling_final",
+      "returncode": 0
+    },
+    {
+      "notebook": "part2_error_analysis_final",
+      "returncode": 0
+    },
+    {
+      "notebook": "part2_calibration_final",
+      "returncode": 0
+    }
+  ],
+  "no_project_module_imports": true,
+  "no_training": true
+}

@@ -1,0 +1,10 @@
+{
+  "cluster_method": "kmeans",
+  "k": 10,
+  "pc1_variance_fraction": 0.16719289609165153,
+  "pc2_variance_fraction": 0.07444734560589629,
+  "first_two_variance_fraction": 0.24164024169754783,
+  "components_for_90_percent": 64,
+  "components_for_95_percent": 92,
+  "silhouette_original_space_sample_1000": 0.17035088478247282
+}

@@ -1,0 +1,34 @@
+{
+  "source_files_verified": 195,
+  "part1_validation": {
+    "sample_f1": 0.8867521367521366,
+    "macro_f1": 0.7792343604108309
+  },
+  "part2_validation": [
+    {
+      "candidate": "baseline",
+      "log_loss": 0.5737533226117716,
+      "phase_macro_log_loss": 0.5681597795867456
+    },
+    {
+      "candidate": "sigmoid_pooled",
+      "log_loss": 0.5722087687860149,
+      "phase_macro_log_loss": 0.5662396129917648
+    },
+    {
+      "candidate": "sigmoid_by_phase",
+      "log_loss": 0.5726097524662837,
+      "phase_macro_log_loss": 0.5685883940057278
+    }
+  ],
+  "original_behavior_tests_run": 9,
+  "tests_passed": true,
+  "historical_test_not_run": "part2.test_calibration.CalibrationChecks.test_saved_artifacts: asserts Michael-only root tree hashes; deliberately inapplicable to integration. Saved predictions, models, submissions and folds independently verified here.",
+  "original_37_experiments_verified": true,
+  "no_model_retraining": true,
+  "resolved_rows": 131,
+  "resolved_unique_trials": 113,
+  "remaining_unresolved": 0,
+  "part1_submission_rows": 312,
+  "part2_submission_rows": 1500
+}

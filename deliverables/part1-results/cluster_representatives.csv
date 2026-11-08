@@ -1,0 +1,31 @@
+cluster,ID,start_year,distance_to_centroid,label_source,observed_reasons,diseases,drugs
+0,TR07464,2009,10.744281060496,observed,Safety,"['diabetes mellitus, type 2']","['placebo', 'ly2599506']"
+0,TR08610,2010,10.744281060496,observed,Safety,"['diabetes mellitus, type 2']","['ly2599506', 'glyburide', 'placebo']"
+0,TR01182,2002,11.071659426711513,observed,Safety,['congestive heart failure'],"['dronedarone (sr33589)', 'placebo']"
+1,TR04307,2005,6.671743448260691,hidden,unavailable,"['anemia', 'chronic kidney disease', 'chronic renal failure']","['placebo', 'peginesatide']"
+1,TR06662,2008,6.903998194707419,hidden,unavailable,"['breast cancer', 'metastasis', 'sur-expressing her2-neu']","['trastuzumab', 'other chemotherapy in association with trastuzumab']"
+1,TR04199,2004,6.903998194707419,hidden,unavailable,['menopause'],"['esterified estrogens 1.25mg and methyltestosterone 2.5mg', 'esterified estrogens 1.25 mg']"
+2,TR10566,2002,1.1570236383540298,observed,Recruitment,['esophageal metaplasia'],['ranitidine & pantoprazole']
+2,TR04385,2003,1.1570247919544856,hidden,unavailable,['cervical cancer'],"['carboplatin', 'docetaxel']"
+2,TR01756,2007,1.1570248122363922,hidden,unavailable,"['stage i multiple myeloma', 'stage ii multiple myeloma', 'stage iii multiple myeloma']","['bortezomib', 'lenalidomide', 'dexamethasone']"
+3,TR01530,2009,7.347584910743772,hidden,unavailable,['non-small cell lung cancer'],"['carboplatin', 'paclitaxel', 'bevacizumab']"
+3,TR00162,2008,7.397714170143763,hidden,unavailable,"['sarcoma', 'soft tissue sarcoma']","['avastin', 'doxorubicin']"
+3,TR09524,2009,7.452030667534343,hidden,unavailable,"['relapsed acute lymphoblastic leukemia', 'allergy to peg e.coli asparaginase', 'allergy to native e.coli asparaginase']","['erwinase', 'vincristine', 'dexamethasone', 'doxorubicin', 'cytarabine', 'methotrexate', 'triple in"
+4,TR08043,2005,5.283128981339395,observed,Other,"['depressive disorder, major']","['cp-316,311', 'placebo', 'sertraline']"
+4,TR06835,2007,5.576198706582506,hidden,unavailable,['breast neoplasms'],"['exemestane', 'sunitinib malate']"
+4,TR08994,2004,5.94663822743164,hidden,unavailable,"['melanoma', 'colonic neoplasms', 'breast neoplasms']",['pd-0325901']
+5,TR05839,2006,8.36646128525712,hidden,unavailable,"['sickle cell disease', 'sickle cell anemia']",['ica-17043']
+5,TR06810,2010,8.824314249374094,hidden,unavailable,['multiple myeloma'],['hll1-dox (the doxorubicin conjugate of milatuzumab)']
+5,TR10165,2003,8.865394650311659,hidden,unavailable,"['brain and central nervous system tumors', 'melanoma', 'solid tumor']","['ps-341 (velcade)', 'temozolomide', 'ps-341 (velcade)', 'temozolomide']"
+6,TR10598,2007,6.865494031030953,hidden,unavailable,"['pulmonary disease, chronic obstructive']","['zileuton', 'placebo']"
+6,TR04349,2001,6.913667238434078,observed,Recruitment,"['lymphoma, large-cell, diffuse']","['rituximab', 'doxorubicin', 'cyclophosphamide', 'vindesine', 'bleomycin', 'prednisone', 'prednisone"
+6,TR08266,2007,7.020112383757916,hidden,unavailable,['acute heart failure'],['acipimox']
+7,TR02543,2009,6.438829742055098,hidden,unavailable,"['cutaneous t-cell lymphoma stage i', 'cutaneous t-cell lymphoma stage ii', 'cutaneous t-cell lymphoma stage iii', 'cutaneous t-cell lymphoma stage iv']",['vorinostat']
+7,TR07200,2010,6.438829742055098,hidden,unavailable,['pancreatic cancer'],"['gemcitabine, bosutinib']"
+7,TR08719,2009,6.8559107211837835,hidden,unavailable,"['prostate cancer', 'adenocarcinoma of the prostate', 'recurrent prostate cancer', 'stage i prostate cancer', 'stage iii prostate cancer', 'stage iv prostate ca","['sunitinib malate', 'docetaxel', 'prednisone']"
+8,TR04773,2000,5.271374834969334,observed,Recruitment,['lymphoma'],"['carmustine', 'cyclophosphamide', 'dacarbazine', 'doxorubicin hydrochloride', 'etoposide', 'vinblas"
+8,TR10384,1997,5.271377226418192,observed,Recruitment,['ovarian neoplasms'],"['caelyx', 'paclitaxel hcl']"
+8,TR02538,1999,5.271383607801232,observed,Recruitment,"['chronic myeloproliferative disorders', 'leukemia', 'lymphoma', 'multiple myeloma and plasma cell neoplasm', 'myelodysplastic syndromes']",['compound 506u78']
+9,TR03492,1998,1.6042152122672324,observed,Recruitment,['bladder cancer'],"['cisplatin', 'fluorouracil']"
+9,TR03412,1997,1.6042202631334668,observed,Recruitment,['lymphoma'],"['cyclophosphamide', 'prednisone', 'vincristine sulfate']"
+9,TR09493,1999,1.6042255667303096,observed,Recruitment,['leukemia'],"['cyclosporine', 'cytarabine', 'filgrastim', 'methotrexate', 'methylprednisolone', 'mitoxantrone hyd"

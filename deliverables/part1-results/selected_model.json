@@ -1,0 +1,12 @@
+{
+  "method": "kmeans",
+  "features": "embeddings",
+  "k": 10,
+  "pseudo_threshold": 0.3,
+  "pseudo_weight": 0.25,
+  "C": 0.1,
+  "sample_f1": 0.8547008547008546,
+  "macro_f1": 0.6923249299719888,
+  "random_state": 42,
+  "validation_configurations": 70
+}
