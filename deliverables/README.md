@@ -120,3 +120,29 @@ and add a verified Part 2 leaderboard result only if available. The assignment
 PDF is absent; requirements were read from `Midterm_Project.tex`. The draft uses
 the CVPR style corresponding to the assignment's current Overleaf template link
 and is four pages including references. Review before submission.
+
+## Notebook anonymization and execution check (2026-11-07)
+
+All seven notebooks under `notebooks/` have been checked for personal names and
+contributor references in source, Markdown, saved outputs, and metadata. Historical
+absolute output paths have been anonymized. New outputs use relative paths under
+`deliverables/reproduced/`.
+
+`part2_cleaned_combined_final.ipynb` is an additional supplementary experiment
+notebook. Its preprocessing requires NLTK and the bundled `deliverables/nltk_data/`
+resources. Include that directory when copying the notebooks for submission; the
+notebook adds it to NLTK's search path automatically. Install dependencies using
+`pip install -r deliverables/requirements.txt`. No resource download is needed
+when the bundled directory is present.
+
+The execution check used a temporary copy of the project, fresh Python processes,
+and sequential execution of every code cell with IPython display available.
+The four main notebooks passed in default mode; the three main training notebooks
+were also checked with `RUN_FULL=True`. All cells in the three supplementary
+notebooks were executed, including their training cells. Notebook JSON schemas,
+Python syntax, and embedded PNGs were checked separately. This was headless cell
+execution, not a test of the graphical Jupyter interface. See
+`NOTEBOOK_EXECUTION_CHECK.json` for the recorded outcomes and environment.
+
+Original datasets, saved models, experiment results, and submissions were not
+replaced; newly fitted artifacts from these checks remained in the temporary copy.

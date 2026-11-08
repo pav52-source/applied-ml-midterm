@@ -1,0 +1,124 @@
+{
+  "date": "2026-11-07",
+  "execution": "fresh Python processes; sequential code cells; IPython display; headless Agg backend; isolated temporary project copy",
+  "graphical_jupyter_tested": false,
+  "default_and_supplementary_runs": [
+    {
+      "notebook": "part1_final.ipynb",
+      "returncode": 0,
+      "seconds": 1.09,
+      "mode": "default"
+    },
+    {
+      "notebook": "part1_hybrid_clustering_experiments.ipynb",
+      "returncode": 0,
+      "seconds": 1.76,
+      "mode": "default (all supplementary training cells executed)"
+    },
+    {
+      "notebook": "part1_kmeans_experiments.ipynb",
+      "returncode": 0,
+      "seconds": 17.83,
+      "mode": "default (all supplementary training cells executed)"
+    },
+    {
+      "notebook": "part2_calibration_final.ipynb",
+      "returncode": 0,
+      "seconds": 7.9,
+      "mode": "default"
+    },
+    {
+      "notebook": "part2_cleaned_combined_final.ipynb",
+      "returncode": 0,
+      "mode": "default (all supplementary training cells executed)",
+      "initial_missing_nltk_resources_fixed": true
+    },
+    {
+      "notebook": "part2_error_analysis_final.ipynb",
+      "returncode": 0,
+      "seconds": 7.43,
+      "mode": "default"
+    },
+    {
+      "notebook": "part2_modeling_final.ipynb",
+      "returncode": 0,
+      "seconds": 9.91,
+      "mode": "default"
+    }
+  ],
+  "full_reproduction_runs": [
+    {
+      "notebook": "part1_final.ipynb",
+      "mode": "RUN_FULL=True",
+      "returncode": 0,
+      "seconds": 15.25
+    },
+    {
+      "notebook": "part2_modeling_final.ipynb",
+      "mode": "RUN_FULL=True",
+      "returncode": 0,
+      "seconds": 42.84
+    },
+    {
+      "notebook": "part2_calibration_final.ipynb",
+      "mode": "RUN_FULL=True",
+      "returncode": 0,
+      "seconds": 27.09
+    }
+  ],
+  "notebooks": {
+    "part2_modeling_final.ipynb": {
+      "sha256": "501618aca9219d769ffaac3f05b2c737cba755a15614089b65d39076d435b754",
+      "schema_valid": true,
+      "name_scan_clean": true
+    },
+    "part1_kmeans_experiments.ipynb": {
+      "sha256": "cb67a548b39a0136b70ad251c466bde5c2e2bbf468a4d14d6ff1856107d577fb",
+      "schema_valid": true,
+      "name_scan_clean": true
+    },
+    "part2_cleaned_combined_final.ipynb": {
+      "sha256": "a188c93dd0624c5be93cb0ccd83194870b043efbaa05882010bd0c89849664fc",
+      "schema_valid": true,
+      "name_scan_clean": true
+    },
+    "part2_calibration_final.ipynb": {
+      "sha256": "94a944c57d3f0ed6920c1c91b3d94dbad30b069e59fd4533f15feed0fa9365df",
+      "schema_valid": true,
+      "name_scan_clean": true
+    },
+    "part2_error_analysis_final.ipynb": {
+      "sha256": "e3415debc75e53810d5535c87e7d7beb892b8812178b6b38fe778d0da8c98097",
+      "schema_valid": true,
+      "name_scan_clean": true
+    },
+    "part1_final.ipynb": {
+      "sha256": "1a1227e89d6841c36db69d5d9031f7df77175d63164c99f720aaec93b5228ee3",
+      "schema_valid": true,
+      "name_scan_clean": true
+    },
+    "part1_hybrid_clustering_experiments.ipynb": {
+      "sha256": "0297837abb5bb48ef077ecf32c124a8343da6237bb61af427a582f18f2f8cb64",
+      "schema_valid": true,
+      "name_scan_clean": true
+    }
+  },
+  "environment": {
+    "python": "3.14.8",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "matplotlib": "3.11.2",
+    "nltk": "3.10.3",
+    "nbformat": "5.11.1",
+    "nbclient": "0.11.0"
+  },
+  "notes": [
+    "Missing NLTK resources fixed by bundling resources and using a relative search path.",
+    "Notebook execution packages installed from the existing declared dependencies.",
+    "Only descriptive wording, output filenames/paths, and NLTK resource discovery changed; model algorithms and hyperparameters unchanged.",
+    "Original project models and result files were not overwritten.",
+    "Saved historical notebook outputs were anonymized; execution outputs were inspected in temporary logs rather than replacing historical outputs."
+  ]
+}
