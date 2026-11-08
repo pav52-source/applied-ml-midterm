@@ -1,0 +1,7 @@
+- `notebooks/part1_final.ipynb` — Part 1 supervised controls, K-Means/GMM pseudo-labeling, feature ablations, Funding analysis, and K-NN hybrid classification.
+- `notebooks/part1_hybrid_clustering_experiments.ipynb` — Part 1 hybrid reproduction and controlled KernelPCA and kernel K-Means comparisons.
+- `notebooks/part1_kmeans_experiments.ipynb` — Part 1 cluster-count, selective pseudo-labeling, weighting, regularization, and fallback experiments.
+- `notebooks/part2_modeling.ipynb` — Part 2 phase-prior baseline and 36 TF-IDF Logistic Regression feature, regularization, year, and phase-model comparisons.
+- `notebooks/part2_error_analysis.ipynb` — Part 2 phase-specific stopping-reason error analysis using observed and predicted Part 1 reasons.
+- `notebooks/part2_calibration.ipynb` — Part 2 grouped five-fold probability calibration, pooled and phase-specific sigmoids, evaluation, and candidate predictions.
+- `notebooks/part2_cleaned_combined.ipynb` — Supplementary Part 2 text-cleaning, combined-feature, Naive Bayes, calibration, vocabulary-size, and document-frequency experiments.
